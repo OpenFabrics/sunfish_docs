@@ -10,7 +10,7 @@ Version 0.0.1
 
 The Sunfish OpenFabrics Management Framework API defines a RESTful interface and a standardized data model to provide data structures to help simplify the development of composable distributed, disaggregated, computer architectures. Sunfish contains abstract data structures that represent computer system resources, available network fabric components and management, current resource operational conditions, and abstracted representations of composed disaggregated computing systems.
 
-*Last Updated  01/08/2024*
+*Last Updated  01/26/2024*
 
 **USAGE**
 
@@ -109,12 +109,12 @@ Table 2: Contributors
 | IntelliProp                      | Tracy Spitler      |
 | Lawrence Livermore National Labs | Chris Morrone      |
 | Cornelis                         | Eugene Novak       |
-| Cornelis                         | Dennis Dallesandro |
+| Cornelis                         | Dennis Dalessandro |
 | HPE                              | Kurt Bowman        |
 | Sandia National Labs             | Catherine Appleby  |
 | Los Alamos National Labs         | Alex Lovell-Troy   |
 
-# Table of Contents
+**Table of Contents**
 
 [TOC]
 
@@ -240,7 +240,7 @@ Disaggregated resource types are increasingly being accessed over a variety of f
 
 The management and optimization of such a diverse set of fabrics and fabric technologies to realize the benefits of Composable Disaggregated Infrastructures is quickly becoming a complex issue to solve for infrastructure managers, especially in heterogeneous multi-vendor environments, with multiple vendor-sourced hardware and the ever-expanding collection of proprietary APIs and tools.
 
-### 3.1.3 Sunfish/CDI  Value Propositions
+### 3.1.3 Sunfish/CDI Value Propositions
 
 #### 3.1.3.1  Software Defined Node Architecture
 
@@ -323,7 +323,79 @@ Sunfish registers for Events associated with resources and sends Redfish and Swo
 
 The Goal is to  maintain current Sunfish resource models without ‘polling’.
 
-#### 3.2.2.1 Agent Failover / Failure-recovery
+#### 3.2.2.1 Compute Express Link (CXL)
+
+##### 3.2.2.1.1 CXL Overview
+
+Compute Express Link (CXL) is an open industry standard that defines a family of interconnect protocols to support connections between CPUs and memory expansion devices and accelerators.
+
+#### 3.2.2.2 Compute Express Link (CXL)  Fabric Attached Memory
+
+##### 3.2.2.2.1 CXL Fabric Attached Memory (FAM) Overview
+
+<TBD>
+
+##### 3.2.2.2.2 Sunfish Architecture for Fabric Attached Memory 
+
+This section defines the policies and requirements the Sunfish Architecture imposes on Clients and Agents when interpreting or creating Redfish models of Fabric Attached Memory (FAM) managed via the Sunfish Architecture.  
+
+##### 3.2.2.2.3 Important taxonomy used herein, within the context of discussions around FAM
+
+Producer, Memory source, Memory resource, Memory target, Memory funder: The physical entity attached to the fabric that supplies memory resources to satisfy fabric requests for memory reads and writes. This physical entity will store or recall the data being written or read.
+
+Consumer, Host, Compute Entity, Data Mover, Requester, Initiator: The physical entity attached to the fabric that launches a fabric request for a memory read or write transaction to the target device. This physical entity will source or sink the data contained in the fabric memory read or write transaction.
+
+Homogeneous (wrt memory resource) memory: The first requirement for FAM capacity to be considered homogeneous is such Memory capacity shall have the same persistence or volatile property across the entire range of data locations serviced by said memory sources.  A secondary consideration is not a requirement, but a strong recommendation.  Homogeneous memory capacity should have a similar access latency from similar access points such that multiple threads accessing the same addresses within the capacity have consistent performance.
+
+Fabric Attached Memory is memory capacity that can be accessed across the fabric where the:
+
+·    The source of FAM is the Producer. 
+
+·    The Consumer is the initiator of a memory request; for example a Host or a data move engine.
+
+##### 3.2.2.2.4 Sunfish Policies on Modelling FAM with Redfish Objects
+
+All fabric Agents are expected to comply with the following Sunfish interpretations and requirements when creating Redfish models of a FAM resource on any fabric. The following discussion introduces the critical Redfish objects that are intended to model FAM resources, and declares several general required policies that fabric Agents shall follow when creating these objects. FAM is memory capacity that can be accessed across a fabric. To have a presence on a fabric, the FAM shall have at least one Endpoint on the fabric.
+
+A physical Endpoint shall have an associated unique fabric address that appears in the fabric transport-layer packets. This unique fabric address does not have to be visible in the Redfish Endpoint object JSON description. However, the FM/Agent stack must have the ability to translate a Redfish request targeted to a unique Redfish Endpoint object into one or more fabric-specific requests targeted at the unique fabric hardware entities.
+
+An Endpoint presenting physical FAM to the fabric shall have a Connected Entity linked to a single Fabric Adapter. The Fabric Adapter shall represent the physical device that fields the fabric memory requests from the fabric and produces the response packets to return to the requester. A Fabric Adapter may have multiple ports which link into the fabric. Different fabrics may have different associations of these multiple ports to fabric IDs.  A single Fabric Adapter may present more than one Endpoint on the fabric, but any given physical Endpoint object shall not have more than one associated Fabric Adapter. A Fabric Adapter may present multiple logical devices to the fabric as multiple logical Endpoints. Each logical device shall be modelled as one and only one logical Endpoint, as allowing multiple physical or logical devices to be modelled as only one Endpoint can corrupt the Redfish concept of Zones.)
+
+ The Fabric Adapter device may or may not make known to the FM any details about its associated chassis / enclosure, FRU, containing assembly, or other managers of such related entities. If the FM cannot discern a specific Chassis object housing the FAM’s Fabric Adapter, the FM/Agent stack shall create a generic FAM Chassis instance and attach the Fabric Adapter to the FAM Chassis’ subordinate Fabric Adapters collection. If the Fabric Adapter’s chassis details are supplied to Sunfish by a different Agent (for example, the chassis manager’s Agent), the only clear indicator that the generic FAM Chassis instance created by the fabric Agent and the chassis described by the chassis manager’s Agent are one and the same chassis is for both Agents to fill in the same Redfish Object UUID (or its equivalent) for the Fabric Adapter they each modeled. Therefore, all fabric component instances shall posses a globally unique, vendor defined UUID that can be read by each manager that may become involved. 
+
+The FM shall create the subordinate PORTS collection and instantiate an appropriate Fabric Adapter Port object for each physical PORT discovered on the Fabric Adapter. The Fabric Adapter, by definition must have at least one physical port connected to the fabric which claims this Endpoint. The Fabric Adapter may have additional PORTs that are connected to devices not currently modelled as Redfish Switches or Redfish Endpoints on this same fabric. For example, if the Fabric Adapter represents a multi-headed FAM module. 
+
+ The FM shall discover the entirety of the FAM resources accessible through the Fabric Adapter, and shall create appropriate homogeneous Redfish Memory resource objects to describe the available memory capacity. When the FM discovers the FAM device, the FM/Agent stack is responsible for breaking up all the Memory resources the adapter presents to the fabric into homogeneous memory resource pools. Some FAM devices may declare their memory resources as specific commercially available memory devices (for example: DDR5 DIMM devices, Optane NVDIMMs).  Some FAM devices may declare their memory resources as different quantities of generic memory media types (for example: volatile RAM, persistent RAM, persistent block-mode storage). Homogeneous Memory resources may be modelled using any applicable Redfish Memory object. See example for CXL Type 3 device with homogeneous memory resources in Section TBD. Non-homogeneous Memory resources shall be modelled as an appropriate number of homogeneous Memory resources. See example for CXL Type 3 device with hybrid (volatile and non-volatile) memory resources in Section TBD.
+
+ After creating the appropriate homogeneous Memory resource objects for a Fabric Adapter, the FM/Agent stack shall create one or more homogeneous Memory Domains linked to appropriate collections of the Fabric Adapter’s Memory resource objects. 
+
+Any Fabric Adapter which acts as a producer of FAM resources to the fabric thus shall have navigation links to one or more \*homogeneous\* Memory Domain objects.
+
+ If the FM/Agent stack has an a priori plan that dictates how one or more of a FAM module Fabric Adapter’s Memory Domains are to be split up into individual Memory Chunks, the FM/Agent stack shall create the desired Memory Chunks. If there are no a priori plans that dictate allocation of Memory Chunks from the various MemoryDomains, the FM/Agent stack should not create the Memory Chunks collection or any default Memory Chunk instances. Their existence at the first appearance (creation time) of a FAM module will imply such memory allocations are reserved and not available to Clients of the Sunfish Redfish Service. The Redfish bubble diagram of Figure 1 depicts the Redfish object hierarchy of a FAM object as described by the above Fabric Adapter, Memory Domains, Memory sources, and an existing Memory Chunk. Note that requirement that Memory Domains be homogeneous coupled with the definition that a Memory Chunk is a subordinate of a single Memory Domain implicitly defines a Memory Chunk to consist of homogeneous media locations from within one physical device.
+
+#### 3.2.2.3 NVMe
+
+##### 3.2.2.3.1 NVMe Overview
+
+NVM Express (NVMe) is a standard interface and protocol library developed to fully realize the benefits of Non-Volatile Memory (NVM) by accelerating access to Non-Volatile Memory Devices (e.g., SSDs).  The NVMe specification family defines how hosts communicate with non-volatile memory either directly via e.g., the PCIe interface, or indirectly, through the supported NVMe fabric gransports (e.g., RDMA, Fibre Channel, TCP).  Indirectly accessing NVMe devices over fabrics extends the low-latency, efficient, NVMe storage protocol to provide scale-out access to, and sharing of, storage from remote storage systems (e.g., storage servers, storage appliances).  NVMe maintains the same architecture and software of the NVMe protocol, providing the benefits of NVMe regardless of the fabric type or the type of non-volatile memory used in the storage target or appliance.  
+
+#### 3.2.2.4 Infiniband Fabric
+
+##### 3.2.2.4.1 Infiniband Overview
+
+#### 3.2.2.5 OmniPath Fabric
+
+TBD: This may be the redundant if this is the same as IB...
+
+##### 3.2.2.5.1 OmniPath Overview
+
+#### 3.2.2.6  OmniPath Overview
+
+#### 3.2.2.7 Slingshot Fabric
+
+TBD
+
+##### 3.2.2.7.1 Slingshot Overview
 
 ### 3.2.3 Client Layer
 
@@ -375,139 +447,25 @@ TBD
 
 TBD: Recap of Sunfish Agents as Fabric/Technology Specific Agents and how they map to management capabilities, APIs, ...
 
-## 4.1 Compute Express Link (CXL)
+## 4.1 Sunfish Agent Interaction
 
-### 4.1.1 CXL Overview
+### 4.1.1 Initial Handshake
 
-Compute Express Link (CXL) is an open industry standard that defines a family of interconnect protocols to support connections between CPUs and memory expansion devices and accelerators.
+### 4.1.2 Events
 
-### 4.1.2 RESTful Agent API for CXL
+#### 4.1.2.1 Initial state of subscription
 
-### 4.1.3 Resource URL
+#### 4.1.2.2 Unsubscribing to events
 
-### 4.1.4 Error Messages
+TBD:  specific or all
 
-### 4.1.5 Authorization
+#### 4.1.2.3 Subscribing to events
 
-## 4.2 Compute Express Link (CXL)  Fabric Attached Memory
+TBD:  specific or all
 
-### 4.2.1 CXL Fabric Attached Memory (FAM) Overview
+### 4.1.3 Error Reporting
 
-<TBD>
-
-### 4.2.2 Sunfish Architecture for Fabric Attached Memory 
-
-This section defines the policies and requirements the Sunfish Architecture imposes on Clients and Agents when interpreting or creating Redfish models of Fabric Attached Memory (FAM) managed via the Sunfish Architecture.  
-
-### 4.2.3 Important taxonomy used herein, within the context of discussions around FAM
-
-Producer, Memory source, Memory resource, Memory target, Memory funder: The physical entity attached to the fabric that supplies memory resources to satisfy fabric requests for memory reads and writes. This physical entity will store or recall the data being written or read.
-
-Consumer, Host, Compute Entity, Data Mover, Requester, Initiator: The physical entity attached to the fabric that launches a fabric request for a memory read or write transaction to the target device. This physical entity will source or sink the data contained in the fabric memory read or write transaction.
-
-Homogeneous (wrt memory resource) memory: The first requirement for FAM capacity to be considered homogeneous is such Memory capacity shall have the same persistence or volatile property across the entire range of data locations serviced by said memory sources.  A secondary consideration is not a requirement, but a strong recommendation.  Homogeneous memory capacity should have a similar access latency from similar access points such that multiple threads accessing the same addresses within the capacity have consistent performance.
-
-Fabric Attached Memory is memory capacity that can be accessed across the fabric where the:
-
-·    The source of FAM is the Producer. 
-
-·    The Consumer is the initiator of a memory request; for example a Host or a data move engine.
-
-### 4.2.4 Sunfish Policies on Modelling FAM with Redfish Objects
-
-All fabric Agents are expected to comply with the following Sunfish interpretations and requirements when creating Redfish models of a FAM resource on any fabric. The following discussion introduces the critical Redfish objects that are intended to model FAM resources, and declares several general required policies that fabric Agents shall follow when creating these objects. FAM is memory capacity that can be accessed across a fabric. To have a presence on a fabric, the FAM shall have at least one Endpoint on the fabric.
-
-A physical Endpoint shall have an associated unique fabric address that appears in the fabric transport-layer packets. This unique fabric address does not have to be visible in the Redfish Endpoint object JSON description. However, the FM/Agent stack must have the ability to translate a Redfish request targeted to a unique Redfish Endpoint object into one or more fabric-specific requests targeted at the unique fabric hardware entities.
-
-An Endpoint presenting physical FAM to the fabric shall have a Connected Entity linked to a single Fabric Adapter. The Fabric Adapter shall represent the physical device that fields the fabric memory requests from the fabric and produces the response packets to return to the requester. A Fabric Adapter may have multiple ports which link into the fabric. Different fabrics may have different associations of these multiple ports to fabric IDs.  A single Fabric Adapter may present more than one Endpoint on the fabric, but any given physical Endpoint object shall not have more than one associated Fabric Adapter. A Fabric Adapter may present multiple logical devices to the fabric as multiple logical Endpoints. Each logical device shall be modelled as one and only one logical Endpoint, as allowing multiple physical or logical devices to be modelled as only one Endpoint can corrupt the Redfish concept of Zones.)
-
- The Fabric Adapter device may or may not make known to the FM any details about its associated chassis / enclosure, FRU, containing assembly, or other managers of such related entities. If the FM cannot discern a specific Chassis object housing the FAM’s Fabric Adapter, the FM/Agent stack shall create a generic FAM Chassis instance and attach the Fabric Adapter to the FAM Chassis’ subordinate Fabric Adapters collection. If the Fabric Adapter’s chassis details are supplied to Sunfish by a different Agent (for example, the chassis manager’s Agent), the only clear indicator that the generic FAM Chassis instance created by the fabric Agent and the chassis described by the chassis manager’s Agent are one and the same chassis is for both Agents to fill in the same Redfish Object UUID (or its equivalent) for the Fabric Adapter they each modeled. Therefore, all fabric component instances shall posses a globally unique, vendor defined UUID that can be read by each manager that may become involved. 
-
-The FM shall create the subordinate PORTS collection and instantiate an appropriate Fabric Adapter Port object for each physical PORT discovered on the Fabric Adapter. The Fabric Adapter, by definition must have at least one physical port connected to the fabric which claims this Endpoint. The Fabric Adapter may have additional PORTs that are connected to devices not currently modelled as Redfish Switches or Redfish Endpoints on this same fabric. For example, if the Fabric Adapter represents a multi-headed FAM module. 
-
- The FM shall discover the entirety of the FAM resources accessible through the Fabric Adapter, and shall create appropriate homogeneous Redfish Memory resource objects to describe the available memory capacity. When the FM discovers the FAM device, the FM/Agent stack is responsible for breaking up all the Memory resources the adapter presents to the fabric into homogeneous memory resource pools. Some FAM devices may declare their memory resources as specific commercially available memory devices (for example: DDR5 DIMM devices, Optane NVDIMMs).  Some FAM devices may declare their memory resources as different quantities of generic memory media types (for example: volatile RAM, persistent RAM, persistent block-mode storage). Homogeneous Memory resources may be modelled using any applicable Redfish Memory object. See example for CXL Type 3 device with homogeneous memory resources in Section TBD. Non-homogeneous Memory resources shall be modelled as an appropriate number of homogeneous Memory resources. See example for CXL Type 3 device with hybrid (volatile and non-volatile) memory resources in Section TBD.
-
- After creating the appropriate homogeneous Memory resource objects for a Fabric Adapter, the FM/Agent stack shall create one or more homogeneous Memory Domains linked to appropriate collections of the Fabric Adapter’s Memory resource objects. 
-
-Any Fabric Adapter which acts as a producer of FAM resources to the fabric thus shall have navigation links to one or more \*homogeneous\* Memory Domain objects.
-
- If the FM/Agent stack has an a priori plan that dictates how one or more of a FAM module Fabric Adapter’s Memory Domains are to be split up into individual Memory Chunks, the FM/Agent stack shall create the desired Memory Chunks. If there are no a priori plans that dictate allocation of Memory Chunks from the various MemoryDomains, the FM/Agent stack should not create the Memory Chunks collection or any default Memory Chunk instances. Their existence at the first appearance (creation time) of a FAM module will imply such memory allocations are reserved and not available to Clients of the Sunfish Redfish Service. The Redfish bubble diagram of Figure 1 depicts the Redfish object hierarchy of a FAM object as described by the above Fabric Adapter, Memory Domains, Memory sources, and an existing Memory Chunk. Note that requirement that Memory Domains be homogeneous coupled with the definition that a Memory Chunk is a subordinate of a single Memory Domain implicitly defines a Memory Chunk to consist of homogeneous media locations from within one physical device.
-
-### 4.2.5 RESTful Agent API for CXL FAM
-
-### 4.2.6 Resource URL
-
-### 4.2.7 Error Messages
-
-### 4.2.8 Authorization
-
-## 4.3 NVMe
-
-### 4.3.1 NVMe Overview
-
-NVM Express (NVMe) is a standard interface and protocol library developed to fully realize the benefits of Non-Volatile Memory (NVM) by accelerating access to Non-Volatile Memory Devices (e.g., SSDs).  The NVMe specification family defines how hosts communicate with non-volatile memory either directly via e.g., the PCIe interface, or indirectly, through the supported NVMe fabric gransports (e.g., RDMA, Fibre Channel, TCP).  Indirectly accessing NVMe devices over fabrics extends the low-latency, efficient, NVMe storage protocol to provide scale-out access to, and sharing of, storage from remote storage systems (e.g., storage servers, storage appliances).  NVMe maintains the same architecture and software of the NVMe protocol, providing the benefits of NVMe regardless of the fabric type or the type of non-volatile memory used in the storage target or appliance.  
-
-### 4.3.2 RESTful Agent API for NVMe
-
-### 4.3.3 Resource URL
-
-### 4.3.4 Error Messages
-
-### 4.3.5 Authorization
-
-## 4.4 Infiniband Fabric
-
-### 4.4.1 Infiniband Overview
-
-### 4.4.2 RESTful Agent API for Infiniband
-
-### 4.4.3 Resource URL
-
-### 4.4.4 Error Messages
-
-### 4.4.5 Authorization
-
-## 4.5 OmniPath Fabric
-
-TBD: This may be the redundant if this is the same as IB...
-
-### 4.5.1 OmniPath Overview
-
-### 4.5.2 RESTful Agent API for OmniPath
-
-### 4.5.3 Resource URL
-
-### 4.5.4 Error Messages
-
-### 4.5.5 Authorization
-
-## 4.6 Gen-Z Fabric
-
-TBD
-
-### 4.6.1 OmniPath Overview
-
-### 4.6.2 RESTful Agent API for OmniPath
-
-### 4.6.3 Resource URL
-
-### 4.6.4 Error Messages
-
-### 4.6.5 Authorization
-
-## 4.7 Slingshot Fabric
-
-TBD
-
-### 4.7.1 OmniPath Overview
-
-### 4.7.2 RESTful Agent API for OmniPath
-
-### 4.7.3 Resource URL
-
-### 4.7.4 Error Messages
-
-### 4.7.5 Authorization
+## 4.2 Agent Failover / Failure-recovery
 
 # 5. Client and Composition {Layer} Requirements
 
@@ -540,13 +498,13 @@ The Sunfish interface uses and extends the Redfish service interface. As such, a
 
 ## 5.4. Class Of Service requirements
 
-## 7.5. HTTP status codes5
+## 5.5. HTTP status codes
 
-### 7.5.1. Create
+### 5.5.1. Create
 
-### 7.5.2. Update, Replace, Delete
+### 5.5.2. Update, Replace, Delete
 
-### 7.5.3. Actions
+### 5.5.3. Actions
 
 # 6. Annex A: Bibliography
 

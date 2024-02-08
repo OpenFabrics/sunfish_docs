@@ -148,7 +148,7 @@ Table 2: Contributors
 		- [4.1.5. Hardware Managers](#415-hardware-managers)
 	- [4.2. Sunfish Framework Events (Russ) ](#42-sunfish-framework-events-russ-)
 	- [4.3. Interactions between Sunfish and Hardware Agents](#43-interactions-between-sunfish-and-hardware-agents)
-	- [4.4. Agent Failover / Failure-recovery](#44-agent-failover--failure-recovery)
+	- [4.4. Agent Failover / Failure-recovery (Christian)](#44-agent-failover--failure-recovery-christian)
 	- [4.5. Sunfish Access Rights and Permissions](#45-sunfish-access-rights-and-permissions)
 	- [4.6. Sunfish Interpretation of the Redfish Fabric Model](#46-sunfish-interpretation-of-the-redfish-fabric-model)
 - [5. Sunfish Hardware Agents](#5-sunfish-hardware-agents)
@@ -219,6 +219,7 @@ Table 2: Contributors
 	- [8.4. Redfish Models of Host Compute Systems](#84-redfish-models-of-host-compute-systems)
 	- [8.5. Redfish Models of Boundary Components](#85-redfish-models-of-boundary-components)
 
+<div style="page-break-after: always;"></div>
 
 # 1. Abstract
 
@@ -543,14 +544,15 @@ The handshake process is depicted in [Figure x](#handshake-fig). The registratio
 }
 ```
 
-Once Sunfish receives the event, it will (2) generate a UUID associated to the registering Agent and create an `AggregationSource` as described in [Section 4.1.4.1](#agent-model). Since events are sent using a POST operation to the Sunfish EventListener RESTful server, no response (3) is expected by the Agent.
-Once the Agent is registered, it will send one or more events to advertise those resources that are to be managed through Sunfish. For each resource to be advertised, a `ResourceCreated` event is sent containing the new resource in the `OriginOfCondition` field (see below snippet). For each of these events received, Sunfish will crawl the tree that has the resource as root, and add all the resources in its own global view of the system. While crawling, for each further resource to be visited, a GET operation is issued to the agent to get all the details on the resource itself. Once added to the tree, the resource is also added to the `ResourcesAccessed` filed in the `Links` section of the `AggregationSource` object associated to the agent.
+Once Sunfish receives the event, it will (2) generate a 128-bit UUID associated to the registering Agent and create an `AggregationSource` as described in [Section 4.1.4.1](#agent-model). Since events are sent using a POST operation to the Sunfish EventListener RESTful server, the agent will receive a response containing the newly created AggregationSource object (3) populated with the UUID, or an error code and message in case of failure in registering.
+Once the Agent is registered, it will send one or more events to advertise those resources that are to be managed through Sunfish. After the registration is successful, any further event sent by an agent will contain the UUID of the registered agent in the `Context` field of the event payload in the form `Agent: UUID`.
+For each resource to be advertised, a `ResourceCreated` event is sent containing the new resource in the `OriginOfCondition` field (see below snippet). For each of these events received, Sunfish will crawl the tree that has the resource as root, and add all the resources in its own global view of the system. While crawling, for each further resource to be visited, a GET operation is issued to the agent to get all the details on the resource itself. Once added to the tree, the resource is also added to the `ResourcesAccessed` filed in the `Links` section of the `AggregationSource` object associated to the agent.
 
 ```json
 {
     "@odata.type": "#Event.v1_7_0.Event",
     "Name": "Fabric Created",
-    "Context": "",
+    "Context": "Agent: UUID",
     "Events": [ {
         "Severity": "Ok",
         "Message": "New Fabric Created ",
@@ -581,9 +583,10 @@ Objects are marked using the `Oem` field that, according to the RedFish specific
 
 ```
 
-## 4.4. Agent Failover / Failure-recovery
+## 4.4. Agent Failover / Failure-recovery (Christian)
 TBD
 
+Deal with the uuid, what if existing
 
 ## 4.5. Sunfish Access Rights and Permissions
 

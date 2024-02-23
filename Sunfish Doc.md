@@ -147,7 +147,9 @@ Table 2: Contributors
 			- [4.1.4.1. Agents Representation in the Sunfish Model ](#4141-agents-representation-in-the-sunfish-model-)
 		- [4.1.5. Hardware Managers](#415-hardware-managers)
 	- [4.2. Sunfish Framework Events (Russ) ](#42-sunfish-framework-events-russ-)
-	- [4.3. Interactions between Sunfish and Hardware Agents](#43-interactions-between-sunfish-and-hardware-agents)
+	- [4.3. Interactions Between Sunfish and Hardware Agents](#43-interactions-between-sunfish-and-hardware-agents)
+		- [4.3.1. Hardware Agent Registration](#431-hardware-agent-registration)
+		- [4.3.2. Forwarding Requests to Hardware Agents](#432-forwarding-requests-to-hardware-agents)
 	- [4.4. Agent Failover / Failure-recovery (Christian)](#44-agent-failover--failure-recovery-christian)
 	- [4.5. Sunfish Access Rights and Permissions](#45-sunfish-access-rights-and-permissions)
 	- [4.6. Sunfish Interpretation of the Redfish Fabric Model](#46-sunfish-interpretation-of-the-redfish-fabric-model)
@@ -512,7 +514,9 @@ Sunfish registers for Events associated with resources and sends Redfish and Swo
 
 The Goal is to maintain current Sunfish resource models without ‘polling’.
 
-## 4.3. Interactions between Sunfish and Hardware Agents
+## 4.3. Interactions Between Sunfish and Hardware Agents
+
+### 4.3.1. Hardware Agent Registration
 Each hardware Agent must first register with the Sunfish core service before all its resources can be integrated and managed from the Sunfish main endpoint. The registration and discovery of agents is performed through a handshake triggered, usually, at Agent startup. All the interactions part of the discovery handshake are based on redfish events (ADD Link to Section). The handshake process is depicted in Figure (add figure references). As explained in [Section 4.2](#events), events in RedFish are based on the subscription model, where an `EventDestination` object exists for each subscribed entity. In the context of Agents, we assume that the Sunfish core service is subscribed by design to any event an agent might generate. Therefore, a related `EventDestination` object should be pre-populated with the Sunfish service connection details at agent startup.
 
 <a id="handshake-fig"></a>
@@ -546,7 +550,7 @@ The handshake process is depicted in [Figure x](#handshake-fig). The registratio
 
 Once Sunfish receives the event, it will (2) generate a 128-bit UUID associated to the registering Agent and create an `AggregationSource` as described in [Section 4.1.4.1](#agent-model). Since events are sent using a POST operation to the Sunfish EventListener RESTful server, the agent will receive a response containing the newly created AggregationSource object (3) populated with the UUID, or an error code and message in case of failure in registering.
 Once the Agent is registered, it will send one or more events to advertise those resources that are to be managed through Sunfish. After the registration is successful, any further event sent by an agent will contain the UUID of the registered agent in the `Context` field of the event payload in the form `Agent: UUID`.
-For each resource to be advertised, a `ResourceCreated` event is sent containing the new resource in the `OriginOfCondition` field (see below snippet). For each of these events received, Sunfish will crawl the tree that has the resource as root, and add all the resources in its own global view of the system. While crawling, for each further resource to be visited, a GET operation is issued to the agent to get all the details on the resource itself. Once added to the tree, the resource is also added to the `ResourcesAccessed` filed in the `Links` section of the `AggregationSource` object associated to the agent.
+For each resource to be advertised, a `ResourceCreated` event is sent containing the new resource in the `OriginOfCondition` field (see below snippet). For each of these events received, Sunfish will crawl the tree that has the resource as root, and add all the resources in its own global view of the system. While crawling, for each further resource to be visited, a GET operation is issued to the agent to get all the details on the resource itself. Once added to the tree, the resource is also added to the `ResourcesAccessed` field in the `Links` section of the `AggregationSource` object associated to the agent.
 
 ```json
 {
@@ -566,8 +570,11 @@ For each resource to be advertised, a `ResourceCreated` event is sent containing
 ```
 
 The result of the crawling process is for the advertised resource, and all child resources, to be added to the Sunfish main RedFish tree.
+
+### 4.3.2. Forwarding Requests to Hardware Agents
+
 To facilitate associating a resource in the Sunfish RedFish tree with the managing agent, all resources are marked during the above crawling process with the agent UUID.
-Objects are marked using the `Oem` field that, according to the RedFish specification, can be used by organizations for adding custom fields to RedFish objects. The below snippet shows the structure of the Oem extensions used for marking objects. The `ManagingAgent` field contains the full RedFish URL of the managing agent. This structure helps the Sunfish internal services to quickly associated an agent to an object while performing operations on the RedFish tree. An example is a fabric connection being created. In order for the actual connection to take place, the request should be forwarded to the agent managing the specific fabric. The id contained in the Oem extension field of the Fabric object, would identify the managing agent without the need for looking up across all available agents. 
+Objects are marked using the `Oem` field that, according to the RedFish specification, can be used by organizations for adding custom fields to RedFish objects. The below snippet shows the structure of the Oem extensions used for marking objects. The `ManagingAgent` field contains the full RedFish URL of the managing agent. This structure helps the Sunfish internal services to quickly associate an agent to an object while performing operations on the RedFish tree. An example is a fabric connection being created. In order for the actual connection to take place, the request should be forwarded to the agent managing the specific fabric. The id contained in the Oem extension field of the Fabric object, would identify the managing agent without the need for looking up across all available agents. 
 
 ```json
 {

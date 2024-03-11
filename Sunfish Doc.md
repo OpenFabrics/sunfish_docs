@@ -2,7 +2,7 @@
 
 ![img](https://www.openfabrics.org/wp-content/uploads/sunfish-logo-954x614-on-white-300x193_c.jpg)
 
-# Sunfish OpenFabrics Management Framework for Composable Disaggregated Infrastructures
+# Sunfish OpenFabrics Management Framework for Composable Disaggregated Infrastructures <!-- omit from toc -->
 
 Version 0.0.1
 
@@ -114,11 +114,114 @@ Table 2: Contributors
 | Sandia National Labs             | Catherine Appleby  |
 | Los Alamos National Labs         | Alex Lovell-Troy   |
 
-# Table of Contents
+<div style="page-break-after: always;"></div>
 
-[TOC]
+# Table of Contents <!-- omit from toc -->
 
+- [1. Abstract](#1-abstract)
+- [2. Document Scope](#2-document-scope)
+	- [2.1. Audience Assumptions](#21-audience-assumptions)
+	- [2.2. Normative References](#22-normative-references)
+	- [2.3. Terms and Definitions](#23-terms-and-definitions)
+		- [2.3.1. Sunfish-specific Terms](#231-sunfish-specific-terms)
+		- [2.3.2. Redfish terms](#232-redfish-terms)
+	- [2.4. Keywords (normative language terms)](#24-keywords-normative-language-terms)
+- [3. Motivation and Framework Scope](#3-motivation-and-framework-scope)
+	- [3.1. Motivation](#31-motivation)
+		- [3.1.1. Overview of Composable Disaggregated Infrastructure](#311-overview-of-composable-disaggregated-infrastructure)
+		- [3.1.2. Managing Composable Disaggregated Infrastructures](#312-managing-composable-disaggregated-infrastructures)
+		- [3.1.3. Example Sunfish/CDI Value Propositions](#313-example-sunfishcdi-value-propositions)
+			- [3.1.3.1. More Efficient Sharing of Resources Through Resource Pools](#3131-more-efficient-sharing-of-resources-through-resource-pools)
+			- [3.1.3.2. Sharing of Memory resources](#3132-sharing-of-memory-resources)
+			- [3.1.3.3. Sharing of Storage Resources](#3133-sharing-of-storage-resources)
+	- [3.2. Sunfish Framework Scope](#32-sunfish-framework-scope)
+		- [3.2.1. Goal](#321-goal)
+		- [3.2.2. Strategy](#322-strategy)
+		- [3.2.3. Deliverables in This Document](#323-deliverables-in-this-document)
+- [4. Sunfish Framework](#4-sunfish-framework)
+	- [4.1. Components of the Sunfish Framework](#41-components-of-the-sunfish-framework)
+		- [4.1.1. Clients](#411-clients)
+		- [4.1.2. Composability Manager Services](#412-composability-manager-services)
+		- [4.1.3. Sunfish Core Services](#413-sunfish-core-services)
+		- [4.1.4. Agents](#414-agents)
+			- [4.1.4.1. Agents Representation in the Sunfish Model ](#4141-agents-representation-in-the-sunfish-model-)
+		- [4.1.5. Hardware Managers](#415-hardware-managers)
+	- [4.2. Sunfish Framework Events (Russ) ](#42-sunfish-framework-events-russ-)
+	- [4.3. Interactions Between Sunfish and Hardware Agents](#43-interactions-between-sunfish-and-hardware-agents)
+		- [4.3.1. Hardware Agent Registration](#431-hardware-agent-registration)
+		- [4.3.2. Forwarding Requests to Hardware Agents](#432-forwarding-requests-to-hardware-agents)
+	- [4.4. Agent Failover / Failure-recovery (Christian)](#44-agent-failover--failure-recovery-christian)
+	- [4.5. Sunfish Access Rights and Permissions](#45-sunfish-access-rights-and-permissions)
+	- [4.6. Sunfish Interpretation of the Redfish Fabric Model](#46-sunfish-interpretation-of-the-redfish-fabric-model)
+- [5. Sunfish Hardware Agents](#5-sunfish-hardware-agents)
+	- [5.1. Common Roles, Responsibilities and Requirements](#51-common-roles-responsibilities-and-requirements)
+		- [5.1.1. CXL Overview](#511-cxl-overview)
+		- [5.1.2. RESTful Agent API for CXL](#512-restful-agent-api-for-cxl)
+		- [5.1.3. Resource URL](#513-resource-url)
+		- [5.1.4. Error Messages](#514-error-messages)
+		- [5.1.5. Authorization](#515-authorization)
+	- [5.2. Compute Express Link (CXL)  Fabric Attached Memory](#52-compute-express-link-cxl--fabric-attached-memory)
+		- [5.2.1. CXL Fabric Attached Memory (FAM) Overview](#521-cxl-fabric-attached-memory-fam-overview)
+		- [5.2.2. Sunfish Architecture for Fabric Attached Memory](#522-sunfish-architecture-for-fabric-attached-memory)
+		- [5.2.3. Important taxonomy used herein, within the context of discussions around FAM](#523-important-taxonomy-used-herein-within-the-context-of-discussions-around-fam)
+		- [5.2.4. Sunfish Policies on Modelling FAM with Redfish Objects](#524-sunfish-policies-on-modelling-fam-with-redfish-objects)
+		- [5.2.5. RESTful Agent API for CXL FAM](#525-restful-agent-api-for-cxl-fam)
+		- [5.2.6. Resource URL](#526-resource-url)
+		- [5.2.7. Error Messages](#527-error-messages)
+		- [5.2.8. Authorization](#528-authorization)
+	- [5.3. NVMe](#53-nvme)
+		- [5.3.1. NVMe Overview](#531-nvme-overview)
+		- [5.3.2. RESTful Agent API for NVMe](#532-restful-agent-api-for-nvme)
+		- [5.3.3. Resource URL](#533-resource-url)
+		- [5.3.4. Error Messages](#534-error-messages)
+		- [5.3.5. Authorization](#535-authorization)
+	- [5.4. Infiniband Fabric](#54-infiniband-fabric)
+		- [5.4.1. Infiniband Overview](#541-infiniband-overview)
+		- [5.4.2. RESTful Agent API for Infiniband](#542-restful-agent-api-for-infiniband)
+		- [5.4.3. Resource URL](#543-resource-url)
+		- [5.4.4. Error Messages](#544-error-messages)
+		- [5.4.5. Authorization](#545-authorization)
+	- [5.5. OmniPath Fabric](#55-omnipath-fabric)
+		- [5.5.1. OmniPath Overview](#551-omnipath-overview)
+		- [5.5.2. RESTful Agent API for OmniPath](#552-restful-agent-api-for-omnipath)
+		- [5.5.3. Resource URL](#553-resource-url)
+		- [5.5.4. Error Messages](#554-error-messages)
+		- [5.5.5. Authorization](#555-authorization)
+	- [5.6. 5.6 Gen-Z. Fabric](#56-56-gen-z-fabric)
+		- [5.6.1. OmniPath Overview](#561-omnipath-overview)
+		- [5.6.2. RESTful Agent API for OmniPath](#562-restful-agent-api-for-omnipath)
+		- [5.6.3. Resource URL](#563-resource-url)
+		- [5.6.4. Error Messages](#564-error-messages)
+		- [5.6.5. Authorization](#565-authorization)
+	- [5.7. Slingshot Fabric](#57-slingshot-fabric)
+		- [5.7.1. OmniPath Overview](#571-omnipath-overview)
+		- [5.7.2. RESTful Agent API for OmniPath](#572-restful-agent-api-for-omnipath)
+		- [5.7.3. Resource URL](#573-resource-url)
+		- [5.7.4. Error Messages](#574-error-messages)
+		- [5.7.5. Authorization](#575-authorization)
+- [6. Composability Manager (Mike/Alex/Catherine/Cayton)](#6-composability-manager-mikealexcatherinecayton)
+	- [6.1. Client and Composition Layer Requirements](#61-client-and-composition-layer-requirements)
+	- [6.2. Security](#62-security)
+	- [6.3. Events](#63-events)
+		- [6.3.1. Message Registry Selection and Management](#631-message-registry-selection-and-management)
+		- [6.3.2. Required Usage](#632-required-usage)
+		- [6.3.3. Recommended Usage](#633-recommended-usage)
+	- [6.4. Discovering resources via Sunfish](#64-discovering-resources-via-sunfish)
+	- [6.5. Class Of Service requirements](#65-class-of-service-requirements)
+- [7. Annex A: Bibliography](#7-annex-a-bibliography)
+	- [7.1. A.1 Overview](#71-a1-overview)
+	- [7.2. A.2 Informational references](#72-a2-informational-references)
+- [8. Appendix B: Sunfish Requirements For Redfish Modelling](#8-appendix-b-sunfish-requirements-for-redfish-modelling)
+	- [8.1. HTTP status codes](#81-http-status-codes)
+		- [8.1.1. Create](#811-create)
+		- [8.1.2. Update, Replace, Delete](#812-update-replace-delete)
+		- [8.1.3. Actions](#813-actions)
+	- [8.2. Sunfish Requirements for Redfish Models of FAM](#82-sunfish-requirements-for-redfish-models-of-fam)
+	- [8.3. Sunfish Requirements of Redfish Models of GPU pools](#83-sunfish-requirements-of-redfish-models-of-gpu-pools)
+	- [8.4. Redfish Models of Host Compute Systems](#84-redfish-models-of-host-compute-systems)
+	- [8.5. Redfish Models of Boundary Components](#85-redfish-models-of-boundary-components)
 
+<div style="page-break-after: always;"></div>
 
 # 1. Abstract
 
@@ -155,7 +258,7 @@ Table 3: Approved normative references
 
 In this document, some terms have a specific meaning beyond the normal English meaning. Those terms are defined in this clause including new terms, frequently used Composable Disaggregated Resource Management terms, Sunfish Terms, Redfish terms, etc.
 
-### 2.3.1 Sunfish-specific Terms
+### 2.3.1. Sunfish-specific Terms
 
 The terms listed in <TBD: Insert hyperlink to Table 5> are used in this document.
 
@@ -173,7 +276,7 @@ Table 5: Sunfish terms
 
 
 
-### 2.3.2 Redfish terms
+### 2.3.2. Redfish terms
 
 Many terms in this document were originally defined in the Redfish Specification. Some of the more common terms and definitions are reproduced in <TBD: Insert hyperlink to Table 6>, as an aid to the reader.
 
@@ -188,7 +291,7 @@ Table 6: Redfish terms
 | Request                | A message from a client to a service.                        |
 | Service Root           | Resource that serves as the starting point for locating and accessing the other resources and associated metadata that together make up an instance of a Redfish Service. |
 
-## 2.4 Keywords (normative language terms)
+## 2.4. Keywords (normative language terms)
 
 This document conforms to ISO/IEC Directives, Part 2 for keyword usage. The most common terms and their intended meanings are summarized <TBD: Insert hyperlink to Table 7>.
 
@@ -202,10 +305,10 @@ Table 7: Normative language terms
 | can / cannot        | Expected or conceivable material, physical or causal outcome |
 | must                | Identifies a constraint or obligation on the user of the document, typically due to one or more legal requirements or laws of nature, that is not stated as a provision of the standard *NB:* “must” is not an alternative for “shall”, and should only be used for constraints that arise from outside this standard |
 
-# 3 Motivation and Framework Scope
+# 3. Motivation and Framework Scope
 
-## 3.1 Motivation
-### 3.1.1 Overview of Composable Disaggregated Infrastructure
+## 3.1. Motivation
+### 3.1.1. Overview of Composable Disaggregated Infrastructure
 Traditional HPC compute clusters are created by combining separate compute servers over a shared network fabric. Each individual compute server in the cluster is statically provisioned with its own CPUs, memory devices, accelerator cards, and storage devices to accommodate as many different application runtime requirements as possible. This need to incorporate “all of the options that may be required to support a given workload” often results in resource overprovisioning, makes traditional HPC architectures less flexible and less efficient, and can lead to situations where application jobs are more prone to run-time failure. Resources overprovisioning and inefficient use of hardware are common issues to any large scale computing facility.
 
 For example, design considerations that lead to an under estimation of compute server memory resources can cause out-of-memory conditions. In another example, IO server memory oversubscription can result in filesystem failure and can occur due to virtual memory page swap thrashing, and lead to eventually application failure. The above issues could be mitigated with the dynamic addition of memory.
@@ -221,7 +324,7 @@ With Composable Disaggregated Infrastructures, computational resources are not s
 CDI enables assigning pools of resources to consumers. Remote resource disaggregation is already common for storage devices (e.g., NVMe-oF); current trends are pushing this paradigm further, extending it to assigning private or shared resources such as computational engines, disaggregated memory elements, disaggregated accelerators, and eventually to all forms of compute resources required by modern HPC applications.
 
 
-### 3.1.2 Managing Composable Disaggregated Infrastructures
+### 3.1.2. Managing Composable Disaggregated Infrastructures
 
 The larger the HPC system, the greater the potential impact of dynamic composability of disaggregated components to energy efficiency and computational stability. Composability managers are needed to efficiently connect workloads with resources in a dynamic ecosystem, at scale, without concern for the management model of the underlying hardware technology; in addition, centralized composabilty management must be scalable to be able to handle massive amounts of hardware telemetry, device states, device capabilities, and subscription information from large numbers of resources.
 
@@ -229,10 +332,10 @@ Disaggregated resource types are increasingly being accessed over a variety of f
 
 The management and optimization of such a diverse set of fabrics and fabric technologies to realize the benefits of Composable Disaggregated Infrastructures is quickly becoming a complex issue to solve for infrastructure managers, especially in heterogeneous multi-vendor environments, with multiple vendor-sourced hardware and the ever-expanding collection of proprietary APIs and tools.
 
-### 3.1.3 Example Sunfish/CDI Value Propositions
+### 3.1.3. Example Sunfish/CDI Value Propositions
 
 
-#### 3.3.1  More Efficient Sharing of Resources Through Resource Pools
+#### 3.1.3.1. More Efficient Sharing of Resources Through Resource Pools
 
 In current HPC systems, hardware resources that are necessary to provide every type of computation must be installed into the compute nodes. This type of architectural design leads to wasted resources and limitations on the resources that are available to user jobs. For instance, if a user job requires six GPUs, 1 TB of on-board memory, and eight CPU cores in each node to complete a batch job, then the job cannot be run on a cluster with four GPUs and four CPU cores.In current HPC systems, hardware resources that are necessary to provide every type of computation must be installed into the compute nodes. This type of architectural design leads to wasted resources and limitations on the resources that are available to user jobs. For instance, if a user job requires six GPUs, 1 TB of on-board memory, and eight CPU cores in each node to complete a batch job, then the job cannot be run on a cluster with four GPUs and four CPU cores. In addition, if a batch job needs two GPUs and two CPU cores, two GPUs and two CPU cores are wasted resources that can't be allocated to other 'needy' batch jobs.
 
@@ -242,7 +345,7 @@ In a new composable HPC system <TBD: Insert hyperlink reference to the appropria
 
 ![img](https://www.openfabrics.org/wp-content/uploads/ofmfwg/2022-12-updates/Slide7.jpeg)
 
-#### 3.3.2 Sharing of Memory resources
+#### 3.1.3.2. Sharing of Memory resources
 
 The CXL 3.1 specification enables remote memory to be pooled or shared.  The figure below shows a simple example of memory sharing. On the left side, the orange node is connected to the orange NVMe memory through a CXL switch. On the right side, the CXL components have been configured to allow the orange node to take a smaller portion of a shared NVMe memory. The blue node, needing more memory resources, has a portion of the shared memory and another CXL memory, again connected via a CXL fabric switch.  Each of these CXL devices and switches potentially have their own hardware manager entities, each of which must be informed of the required configuration details.  The Sunfish Framework provides administrators a single API through which to manage all these different components.
 
@@ -250,7 +353,7 @@ The CXL 3.1 specification enables remote memory to be pooled or shared.  The fig
 
 ![image-20231222105329458](C:\Users\pccayton\AppData\Roaming\Typora\typora-user-images\image-20231222105329458.png)
 
-#### 3.3.3 Sharing of Storage Resources
+#### 3.1.3.3. Sharing of Storage Resources
 
 
 Node-local parallel filesystems (e.g., BeeGFS, Lustre) provide ephemeral scratch space to keep inter-node IO traffic localized. In many cases, the best way to implement the back-end block devices for these node-local parallel filesystems is with RAM disks. On-demand parallel filesystems are implemented with Management, Metadata Targets, and Object Storage (see the figure below). The amount of allocated RAM disk storage must provide enough space to accommodate growth of Metadata and Object Storage stripes. Communication between the parallel filesystem components can be performed via Ethernet but is more commonly performed with RDMA to reduce communication latency and improve bandwidth. In current HPC and Cloud architectures, the RAM disk block devices are reducing the available RAM for running processesNode-local parallel filesystems (e.g., BeeGFS, Lustre) provide ephemeral scratch space to keep inter-node IO traffic localized. In many cases, the best way to implement the back-end block devices for these node-local parallel filesystems is with RAM disks. On-demand parallel filesystems are implemented with Management, Metadata Targets, and Object Storage (see the figure below). The amount of allocated RAM disk storage must provide enough space to accommodate growth of Metadata and Object Storage stripes. Communication between the parallel filesystem components can be performed via Ethernet but is more commonly performed with RDMA to reduce communication latency and improve bandwidth. In current HPC and Cloud architectures, the RAM disk block devices are reducing the available RAM for running processes.
@@ -263,9 +366,9 @@ In a composable parallel computing system, a better option is to deploy requeste
 
 ## 3.2. Sunfish Framework Scope
 
-### 3.2.1 Goal
+### 3.2.1. Goal
 Provide Clients of Sunfish with a vendor and fabric agnostic API which enables them to view the composable resources of the fabrics, understand their status, manipulate their state, compose subsets into functional virtual platforms, and monitor their health and the progress of their jobs. 
-### 3.2.2 Strategy
+### 3.2.2. Strategy
 Standardize on models of composable fabric resources based on the Redfish (DTMF) and Swordfish (SNIA) schema. 
 
 Analyze specific tasks which applications and administrators need to perform to access and/or manage composable fabric resources (and ‘fabric management objects’) at an appropriate level of abstraction.  
@@ -276,7 +379,7 @@ Extract a suitable model of such abstracted resource objects and functional oper
 * Fabric resources: any resource that might be made available to an application thread as an OS resource; EG. Memory, Fabric Attached Memory (FAM), GPUs, CPUs, storage, remote storage, etc. 
 * Fabric management objects:  any resource that an administrator might need to manipulate to establish proper behavior of the fabrics that interconnect the composable resources; EG., fabric switches, fabric gateways, firewalls, etc.
 
-### 3.2.3 Deliverables in This Document
+### 3.2.3. Deliverables in This Document
 Define a Sunfish software stack model which forms the basis of the standardized framework (Architecture) of Actors and message flows (APIs) between them.
 
 Define interpretations of Redfish or Swordfish schemas that enable vendor and fabric agnostic modelling of composable fabric resources.  Work with the DMTF or SNIA to extend existing schemas as necessary or introduce new objects and schema to offer the necessary object models and actions to fulfil the needs of the use cases analysed.  
@@ -303,20 +406,20 @@ The figure above makes several important points:
 * It is critical that Agents and Clients have the same interpretation of a Redfish object found in the Sunfish database, so the Sunfish framework also has policies and requirements to be followed when creating or interpreting the Redfish models.
 
 
-## 4.1 Components of the Sunfish Framework
+## 4.1. Components of the Sunfish Framework
 Figure <TBD: Insert figure reference to image below> depicts the major software components (layers) that make up the architecture of the Sunfish Open Fabric Management Framework:
 
 ![image](./imgs/Sunfish_detailed_blocks_012824.png)
 
 CDI requires some modest amount of scale, which in turn likely requires a Redfish representation of many different resource types residing on different interconnects, all supplied by different vendors.  Disaggregated resources and interconnect fabrics may or may not support a Redfish API suitable for directly plugging into the Sunfish management framework, so the presence of an API translating Agent entity is used in all cases, though the complexity of any given Agent obviously depends upon the actual fabric management APIs and policies in use in the hardware managers’ realm. Sunfish not only collects and manages the Redfish object models for disaggregated resources and the fabrics that connects them, but also serves up control points for many common management tasks, such as Events and Logs, Access Control settings and policies, and authentication needs.
-### 4.1.1 Clients
+### 4.1.1. Clients
 Clients are any of the applications, application libraries (such as libfabric, OpenFAM, or OpenSHMEM), resource managers (such as FAM pool managers, storage pool managers), orchestration managers, workload managers, and the admin GUI and tools that call into the Sunfish CORE’s Redfish Services.
 
 Client software queries the Sunfish Core Redfish Service (using HTTP GET, for example) to determine what resources are available on the fabric.  Clients issue updates (using HTTP PUT, POST, PATCH, DELETE) to objects to make modifications to the Redfish fabric model.
 
 Clients identify the fabric resources by the URIs given them by the Sunfish Core’s Redfish Service.  When clients need to exchange information about fabric resources, they use the Sunfish Core’s URIs to unambiguously refer to specific objects.  Clients accept the Redfish object description as the common truth.  The URIs in use within the Sunfish Core Redfish Service are unique only to that Service and make up that Sunfish Core’s Redfish URI namespace.
 
-### 4.1.2 Composability Manager Services
+### 4.1.2. Composability Manager Services
 The element that sits between clients and the Sunfish Core central block is collectively called the Composability Manager.  The Composability Manager can be seen as a collection of resource managers, policy stores, and monitoring elements for tracking the current state of the entire system.  The Composability Manager is in charge of composing hardware resources according to requirements coming from clients and by applying specific policies. Technically the members of the Composability Manager are all clients of the Sunfish Core Services and any user or admin application can pursue taking responsibility for these tasks.  However, within the Sunfish Core Architecture we anticipate releasing a coordinated set of reference code utilities to offer random clients commonly needed ‘composability’ features.
 
 Examples of such features (not an exhaustive list):
@@ -331,7 +434,7 @@ Examples of such features (not an exhaustive list):
 
 *Coordinating these various clients enforces a cohesive interpretation of the Redfish objects and schema which are used to describe the fabric resources being managed.* In addition, permissions and access controls for shared fabric resources need to be managed in this layer, which is above the Sunfish Core which enforces access controls and below the general Clients upon which the restrictions are imposed.   
 
-### 4.1.3 Sunfish Core Services
+### 4.1.3. Sunfish Core Services
 The Sunfish Core Services are presented to all clients via Redfish API calls.  The Sunfish Core maintains the aggregate Redfish model of all fabrics it controls and all resources on those fabrics.  When clients request data or request changes to model objects, the Sunfish Core determines which Redfish objects in the model are impacted, makes the required changes to those Redfish objects in the model. Any relevant actions or requests that affect state or configuration of the fabric manager or actual fabric hardware are relayed by the Sunfish Core to the fabric-specific Agent. 
 
 The Sunfish Core also subscribes to events from the various Agents and offers its own Events Subscription Service to Sunfish Core Clients.  Clients and the Composability Manager can subscribe to the various Redfish events defined for the Redfish objects, and when the Sunfish Core receives associated events from the Agents these events are forwarded to those subscribed to receive them.    
@@ -340,58 +443,162 @@ Not all client requests will require the Sunfish Core to interact with the fabri
 
 Finally, the Sunfish Core is responsible for tracking and enforcing Authentication and Access Control policies for both Clients and Agents.
 
-### 4.1.4 Agents
-Fabric-specific Agents act as the translators between the Sunfish Core’s Redfish API syntax and schema and the fabric-specific versions used by the given fabric manager software.  Agents thus ‘speak Redfish’ to the Sunfish Core, and speak ‘(potentially) fabric-specific protocols’ to an actual fabric manager. For example, the fabric manager may have a RESTful interface called ‘bind resource’ which allows an admin to enable Host A to access Memory B.  The Sunfish Core’s Redfish equivalent is ‘POST Connection’ between Host A and Memory B.
+### 4.1.4. Agents
+Fabric-specific agents act as the translators between the Sunfish Core’s Redfish API syntax and schema and the vendor-specific versions used by the given fabric manager software.  Agents thus ‘speak Redfish’ to the Sunfish Core, and speak ‘(potentially) fabric-specific protocols’ to an actual fabric manager. For example, the fabric manager may have a RESTful interface called ‘bind resource’ which allows an admin to enable Host A to access Memory B.  The Sunfish Core’s Redfish equivalent is ‘POST Connection’ between Host A and Memory B.
 
-Fabric-specific Agents also act as the translator between the Sunfish Core’s Redfish URI namespace and the fabric specific component and resource namespaces.  For example, the open source Gen-Z fabric manager for Linux (called Zephyr) assigns its own 128-bit UUID-style ID to a Gen-Z fabric memory module.  Redfish models a complicated fabric resident memory module as several related Redfish objects (Fabric Adapters, fabric Ports, fabric Endpoints, Memory Domains, etc).  The Gen-Z Agent is responsible for keeping the mappings between the various Redfish IDs (URIs) assigned by the Sunfish Core and the associated IDs (UUIDs) assigned by the Zephyr Fabric Manager.  Clients use the Redfish IDs, and the fabric manager uses the FM IDs.  The Agent is possibly the only entity that knows both namespaces. 
+Fabric-specific agents also act as the translator between the Sunfish Core’s Redfish URI namespace and the fabric specific component and resource namespaces.  For example, the open source Gen-Z fabric manager for Linux (called Zephyr) assigns its own 128-bit UUID-style ID to a Gen-Z fabric memory module.  Redfish models a complicated fabric resident memory module as several related Redfish objects (Fabric Adapters, fabric Ports, fabric Endpoints, Memory Domains, etc).  The Gen-Z agent is responsible for keeping the mappings between the various Redfish IDs (URIs) assigned by the Sunfish Core and the associated IDs (UUIDs) assigned by the Zephyr Fabric Manager.  Clients use the Redfish IDs, and the fabric manager uses the FM IDs.  The agent is possibly the only entity that knows both namespaces. 
 
-Like the Sunfish Core, an Agent needs to parse requests coming from its client the Sunfish Core, modify its internal representation of its fabric view, update any internal state it is required to track, and send any appropriate request or requests on to the appropriate fabric manager. 
+Like the Sunfish Core, an agent needs to parse requests coming from its client the Sunfish Core, modify its internal representation of its fabric view, update any internal state it is required to track, and send any appropriate request or requests on to the appropriate fabric manager. 
 
-Another very important role of the Agent is to aggregate the inventory and events from multiple hardware Fabric Manager instances used to configure and control larger fabrics as <need reference to detailed block diagram > Figure 1 illustrates.  Since a large fabric may have multiple hardware Fabric Managers controlling components on the fabric which must share a common fabric address namespace, **the task of reconciling multiple namespaces and ‘subnets’ into a single Redfish Fabric representation falls to the Agent.**  Even when the Fabric Managers' APIs are also Redfish, the Agent is responsible for sequencing appropriate Redfish commands and/or actions to the appropriate FMs and coordinating the multiple returns into a suitable response to the Sunfish Core.
+Another very important role of the agent is to aggregate the inventory and events from multiple hardware Fabric Manager instances used to configure and control larger fabrics as <need reference to detailed block diagram > Figure 1 illustrates.  Since a large fabric may have multiple hardware Fabric Managers controlling components on the fabric which must share a common fabric address namespace, **the task of reconciling multiple namespaces and ‘subnets’ into a single Redfish Fabric representation falls to the agent.**  Even when the Fabric Managers' APIs are also Redfish, the agent is responsible for sequencing appropriate Redfish commands and/or actions to the appropriate FMs and coordinating the multiple returns into a suitable response to the Sunfish Core.
 
-Finally, the Agent must pass on events, alerts, and performance monitoring updates in support of the Sunfish CORE’s Redfish events service.  The Agent – Fabric Manager interface is fabric manager specific.  The Sunfish Core – Agent interface is architected to be a Redfish API using Redfish schema so the Agent must translate events and logs emitted by or retrieved from the FM into the appropriate Redfish formats.
-### 4.1.5 Hardware Managers
+Finally, the agent must pass on events, alerts, and performance monitoring updates in support of the Sunfish CORE’s Redfish events service.  The agent – Fabric Manager interface is fabric manager specific.  The Sunfish Core – Agent interface is architected to be a Redfish API using Redfish schema, so the agent must translate events and logs emitted by or retrieved from the FM into the appropriate Redfish formats.
+
+#### 4.1.4.1. Agents Representation in the Sunfish Model <a id="agent-model"></a>
+The Sunfish core component maintains the complete state of the system it oversees, in the form of a Redfish tree. Therefore, each object managed through Sunfish &mdash; be it a memory, a server, a switch, etc. &mdash; has its own Redfish counterpart.
+Agents are represented in Sunfish by means of the `AggregationSource` object that in Redfish represents the source of information for the resources it *aggregates*.
+
+The below snippet shows an example *AggregationSource* for a fictional CXL Fabric agent. The `HostName` field is used for containing the endpoint for connecting to the specific agent. The language to be used for interacting with agents is specified in the `ConnectionMethod` field contained in the `Links` section of the object. There are multiple possible options for a connection method, but Sunfish will always use Redfish for connecting with its agents. We keep the connection method field only for the sake of being complete with respect to the Redfish specification.
+
+```json
+{
+    "@odata.id": "/redfish/v1/AggregationService/AggregationSources/UUID",
+    "@odata.type": "#AggregationSource.v1_2.AggregationSource",
+    "HostName": "http://hostname:port",
+    "Id": "UUID",
+    "Links": {
+        "ConnectionMethod": {
+            "@odata.id": "/redfish/v1/AggregationService/ConnectionMethods/CXL"
+        },
+        "ResourcesAccessed": [
+            "/redfish/v1/Fabrics/CXL"
+        ]
+    },
+    "Name": "Agent UUID"
+}
+```
+
+Each agent is assigned a UUID upon the registration with Sunfish, when the associated AggregationSource object is created.Details on the UUID generation are provided in [Section 4.3.1](#431-hardware-agent-registration)
+All implementations of Sunfish shall expose the `AggregationService` in their main Redfish tree.
+
+
+### 4.1.5. Hardware Managers
 The term 'Hardware Manager' refers to any hardware/software component that is direct control of a set of hardware components (e.g., fabric managers, enclosure managers, BMCs, etc.). 
 The terms ‘fabric manager’ and ‘fabric management’ carry many different interpretations throughout the industry.  Certainly, the large numbers of functions and features required to manage even a modest ‘fabric’ may require many different blocks of code to execute in many different ‘layers’ of a ‘fabric management software stack’.
 
 For the purposes of the Sunfish Core Architecture, Fabric Managers (FMs) are those entities with physical access to the control space of the fabric resources and the authority to modify those settings.  The FM is responsible for performing a fabric crawl, taking inventory of fabric resources, and the initial configuration of such resources as required by the FM’s initial configuration policies.  The FM’s ‘management domain’ is those components for which it has primary access rights to the associated control surfaces.  (‘Fabric Manager’ as used herein is Gen-Z terminology, but the more popular ‘subnet manager’ term is inconsistent across various other fabrics, so we will use Fabric Manager herein.) 
 
-*It is the number of Fabric Agents* of a fabric type that register with the Sunfish core that determines how many ‘Fabric Instances’ appear in the Sunfish CORE’s Redfish collection for that fabric type.  If one Agent is presenting one fabric-specific API to the Sunfish Core Services, that one Agent is responsible for aggregating the namespaces and resources for all FMs reporting through it.  If multiple Agents are communicating with the Sunfish CORE, there will be one Redfish Fabric Instance for each Agent. Thus, Clients may see multiple ‘fabrics’ of the same type in the Redfish Service.
+*It is the number of Fabric agents* of a fabric type that register with the Sunfish core that determines how many ‘Fabric Instances’ appear in the Sunfish CORE’s Redfish collection for that fabric type.  If one agent is presenting one fabric-specific API to the Sunfish Core Services, that one agent is responsible for aggregating the namespaces and resources for all FMs reporting through it.  If multiple agents are communicating with the Sunfish CORE, there will be one Redfish Fabric Instance for each agent. Thus, Clients may see multiple ‘fabrics’ of the same type in the Redfish Service.
 
-## 4.2 Sunfish Framework Events (Russ)
+## 4.2. Sunfish Framework Events (Russ) <a id="events"></a>
 
 
-Agents are resource aggregators that present Sunfish with a Redfish / Swordfish model of all resources which they manage and/or model.  Sunfish / Agent communications are event-driven.  This section provides a high-level overview of Sunfish Agent concepts and functionality; section TBD contains details of technology specific Agents.
+Agents are resource aggregators that present Sunfish with a Redfish / Swordfish model of all resources which they manage and/or model.  Sunfish / agent communications are event-driven.  This section provides a high-level overview of Sunfish agent concepts and functionality; section TBD contains details of technology specific agents.
 
 Agents send Events to Sunfish to: 
 
-- start the Sunfish/Agent interface; Sunfish creates the appropriate objects in its resource tree and acknowledges the event,
+- start the Sunfish/agent interface; Sunfish creates the appropriate objects in its resource tree and acknowledges the event,
 - alert Sunfish of the presence of new resources (e.g., a new fabric); Sunfish responds with a recursive Fetch of all subordinate and linked resources under the newly created resource (TBD: Insert and reference a hyperlink to the appropriate image),
 - alert Sunfish of health and status changes in existing resources, or
-- inform Sunfish of Events received from resources the Agent manages
+- inform Sunfish of Events received from resources the agent manages
 
 <TBD: Insert figure reference to image below>
 
 ![image-20231222144900019](C:\Users\pccayton\AppData\Roaming\Typora\typora-user-images\image-20231222144900019.png)
 
-Sunfish registers for Events associated with resources and sends Redfish and Swordfish API calls to Agents to:
+Sunfish registers for Events associated with resources and sends Redfish and Swordfish API calls to agents to:
 
-- query the latest status, health, or configuration of the Agents’ resources,
-- request changes in state or configuration of Agents’ resources, or
-- create or destroy logical Redfish and Swordfish objects which impact Agents’ resources
+- query the latest status, health, or configuration of the agents’ resources,
+- request changes in state or configuration of agents’ resources, or
+- create or destroy logical Redfish and Swordfish objects which impact agents’ resources
 
-The Goal is to  maintain current Sunfish resource models without ‘polling’.
+The Goal is to maintain current Sunfish resource models without ‘polling’.
 
-## 4.3 Agent Failover / Failure-recovery
+## 4.3. Interactions Between Sunfish and Hardware Agents
+
+### 4.3.1. Hardware Agent Registration
+Each hardware agent must first register with the Sunfish core service before its resources can be integrated and managed from the Sunfish main endpoint. The registration and discovery of agents is performed through a handshake triggered, usually, at agent startup. All the interactions part of the discovery handshake are based on Redfish events (ADD Link to Section). The handshake process is depicted in Figure (add figure references). As explained in [Section 4.2](#events), events in Redfish are based on the subscription model, where an `EventDestination` object exists for each subscribed entity. In the context of agents, we assume that the Sunfish core service is subscribed by design to any event an agent might generate. Therefore, a related `EventDestination` object should be pre-populated with the Sunfish service connection details at agent startup.
+
+<a id="handshake-fig"></a>
+<p align="center">
+<img src="./imgs/sunfish-agent-handshake.png" width="60%">
+</p>
+<p style="text-align:center">Figure x: Sunfish-Agent handshake process</span>
+</p>
+
+
+The handshake process is depicted in [Figure x](#handshake-fig). The registration process starts (1) with the agent sending an `AggregationSourceDiscovered` event to the Sunfish *EventListener* service. Such event carries the connection method type, *Redfish* for any Sunfish applications, and the service endpoint in the format `hostname:port`. Information is passed through events by mean of the `MessageArgs` field with their format being mandated by the [Redfish Message Registry](#ref-events-registry). An example event is shown in the below snippet.
+
+```json
+{
+    "@odata.type": "#Event.v1_7_0.Event",
+    "Name": "AggregationSourceDiscovered",
+    "Context": "",
+    "Events": [ {
+        "Severity": "Ok",
+        "Message": "A aggregation source of connection method
+		            Redfish located at http://hostname:port
+					has been discovered.",
+        "MessageId": "ReosurceEvent.1.x.AggregationSourceDiscovered",
+        "MessageArgs": [ "Redfish", "http://hostname:port" ],
+        "OriginOfCondition": {
+            "@odata.id": "/redfish/v1/AggregationService/ConnectionMethods/NAME"
+        }
+    } ]
+}
+```
+
+Once Sunfish receives the event, it will (2) generate a 128-bit UUID associated to the registering agent and create an `AggregationSource` as described in [Section 4.1.4.1](#agent-model). Since events are sent using a POST operation to the Sunfish EventListener RESTful server, the agent will receive a response containing the newly created AggregationSource object (3) populated with the UUID, or an error code and message in case of failure in registering.
+Once the agent is registered, it will send one or more events to advertise those resources that are to be managed through Sunfish. After the registration is successful, any further event sent by an agent will contain the UUID of the registered agent in the `Context` field of the event payload in the form `Agent: UUID`.
+For each resource to be advertised, a `ResourceCreated` event is sent containing the new resource in the `OriginOfCondition` field (see below snippet). For each of these events received, Sunfish will crawl the tree that has the resource as root, and add all the resources in its own global view of the system. While crawling, for each further resource to be visited, a GET operation is issued to the agent to get all the details on the resource itself. Once added to the tree, the resource is also added to the `ResourcesAccessed` field in the `Links` section of the `AggregationSource` object associated to the agent.
+
+```json
+{
+    "@odata.type": "#Event.v1_7_0.Event",
+    "Name": "Fabric Created",
+    "Context": "Agent: UUID",
+    "Events": [ {
+        "Severity": "Ok",
+        "Message": "New Fabric Created ",
+        "MessageId": "ResourceEvent.1.x.ResourceCreated",
+        "MessageArgs": [],
+        "OriginOfCondition": {
+            "@odata.id": "/redfish/v1/Fabrics/CXL"
+        }
+    }
+    ]}
+```
+
+As a result of the crawling process all resources part of the sub-tree of the advertised resources are brought into the Sunfish tree. At the same time, all resources discovered through links are also added to the Sunfish tree, even if they do not directly belong to the sub-tree of the advertised resource.
+
+### 4.3.2. Forwarding Requests to Hardware Agents
+
+To facilitate associating a resource in the Sunfish Redfish tree with the managing agent, all resources are marked during the above crawling process with the agent UUID.
+Objects are marked using the `Oem` field that, according to the Redfish specification, can be used by organizations for adding custom fields to Redfish objects. The below snippet shows the structure of the Oem extensions used for marking objects. The `ManagingAgent` field contains the full Redfish URL of the managing agent. This structure helps the Sunfish internal services to quickly associate an agent to an object while performing operations on the Redfish tree. An example is a fabric connection being created. In order for the actual connection to take place, the request should be forwarded to the agent managing the specific fabric. The id contained in the Oem extension field of the Fabric object, would identify the managing agent without the need for looking up across all available agents. 
+
+```json
+{
+    "Oem": {
+        "Sunfish_RM":{
+            "@odata.type": "#SunfishExtensions.v1_0_0.ResourceExtensions",
+            "ManagingAgent": {
+                "@odata.id": "/redfish/v1/AggregationService/AggregationSource/AgentID"
+            }
+        }
+    }
+}
+
+```
+
+## 4.4. Agent Failover / Failure-recovery (Christian)
 TBD
 
+Deal with the uuid, what if existing
 
-
-
-## 4.4 Sunfish Access Rights and Permissions
+## 4.5. Sunfish Access Rights and Permissions
 
 TBD
-## 4.5 Sunfish Interpretation of the Redfish Fabric Model
+## 4.6. Sunfish Interpretation of the Redfish Fabric Model
 
 The following diagram depicts a simple Redfish model of a simple CXL fabric that has two switch hops between a host CPU and a Fabric Attached Memory controller.
 
@@ -419,50 +626,50 @@ Discovery of physical and logical resources accessible via the fabric is necessa
 
 TBD: Recap of Sunfish Agents as Fabric/Technology Specific Agents and how they map to management capabilities, APIs, ...
 
-## 5.1 Common Roles, Responsibilities and Requirements
-The general nature of Agent duties are explained in the overview of Agents.  The following is a partial list of key responsibilities of the fabric Agent Service vs the Sunfish Core Service.
-* The Agent is responsible for locating the Sunfish CORE’s Event Service and issuing a form of New Fabric Event Notification to initiate Sunfish Core and Agent communications.
-* The Agent is responsible for declaring the Redfish IDs of all fabric physical components because the Agent presents these objects to the Sunfish CORE. The Namespace translation between the Sunfish CORE’s Redfish namespace and the Fabric Manager’s (potentially) proprietary namespace is managed by the Agent.  
-* Logical objects created by allocating or binding resources of the physical components are given their Redfish IDs by the Service that defines them.  For example, when Clients of the Sunfish Core Service choose to POST a Memory Chunk, the Client decides what Redfish ID to use in the POST request.  If the FM had pre-configured Memory Chunks bound to specific hosts on the fabric, the Agent will assign their Redfish IDs before it makes them known to the Sunfish Core Service.
-* The Agent is responsible to aggregate multiple FM inventories into one fabric namespace since Gen-z fabrics have a flat fabric address space that must be disambiguated before the fabric can carry general data traffic.  Doing this aggregation makes the Agent responsible for creating a unique Redfish ID for each unique fabric component in the aggregated fabric.
-* The Agent shall provide an HTTP Redfish API to the Sunfish CORE
-* The Agent shall track the status of the Sunfish Core representation of the fabric in its Agent – specific internal fabric database for all the fabric objects that it has presented to the Sunfish Core Service, and for all the logical fabric objects sent to it by the Sunfish Core Service.  
-	- The Sunfish Core can use GETs to the Agent’s API Service to get caught up if the Sunfish Core drops
-	- The Agent cannot use GETs to the Sunfish Core Service to discover what was made visible to the Sunfish Core should the Agent drop.  The Agent must alert the Sunfish Core that they are potentially out of sync.
-* The Agent shall issue an Agent Restart Event to the Sunfish Core Service if the Agent drops and recovers. (Actual name of event TBD)
-	- Sunfish Core and Agent actions in response to an Agent Restart are TBD.
-* The Agent parses Redfish requests from the Sunfish Core and 
-	- Evaluates the impact on the Agent’s model of the fabric
+## 5.1. Common Roles, Responsibilities and Requirements
+The general nature of agent duties are explained in the overview of agents.  The following is a partial list of key responsibilities of the fabric agent Service vs the Sunfish Core Service.
+* The agent is responsible for locating the Sunfish CORE’s Event Service and issuing a form of New Fabric Event Notification to initiate Sunfish Core and agent communications.
+* The agent is responsible for declaring the Redfish IDs of all fabric physical components because the agent presents these objects to the Sunfish CORE. The Namespace translation between the Sunfish CORE’s Redfish namespace and the Fabric Manager’s (potentially) proprietary namespace is managed by the agent.  
+* Logical objects created by allocating or binding resources of the physical components are given their Redfish IDs by the Service that defines them.  For example, when Clients of the Sunfish Core Service choose to POST a Memory Chunk, the Client decides what Redfish ID to use in the POST request.  If the FM had pre-configured Memory Chunks bound to specific hosts on the fabric, the agent will assign their Redfish IDs before it makes them known to the Sunfish Core Service.
+* The agent is responsible to aggregate multiple FM inventories into one fabric namespace since Gen-z fabrics have a flat fabric address space that must be disambiguated before the fabric can carry general data traffic.  Doing this aggregation makes the agent responsible for creating a unique Redfish ID for each unique fabric component in the aggregated fabric.
+* The agent shall provide an HTTP Redfish API to the Sunfish CORE
+* The agent shall track the status of the Sunfish Core representation of the fabric in its agent – specific internal fabric database for all the fabric objects that it has presented to the Sunfish Core Service, and for all the logical fabric objects sent to it by the Sunfish Core Service.  
+	- The Sunfish Core can use GETs to the agent’s API Service to get caught up if the Sunfish Core drops
+	- The agent cannot use GETs to the Sunfish Core Service to discover what was made visible to the Sunfish Core should the agent drop.  The agent must alert the Sunfish Core that they are potentially out of sync.
+* The agent shall issue an agent Restart Event to the Sunfish Core Service if the agent drops and recovers. (Actual name of event TBD)
+	- Sunfish Core and agent actions in response to an agent Restart are TBD.
+* The agent parses Redfish requests from the Sunfish Core and 
+	- Evaluates the impact on the agent’s model of the fabric
 	- Evaluates the impact on the FM’s state of the fabric, and creates an appropriate FM specific request to cause the FM to update the state of the fabric accordingly 
 	- Returns success or failure of the Sunfish Core request along with an appropriate Redfish object that results from a successful request
-* The Agent parses any Agent specific HTTP Requests.  These are requests made through the Agent’s client interface that target Agent internal configuration and are not meant to directly manipulate Redfish objects.  Think of these as Agent administration requests.  
-	- Examples:   Restart the Agent, sync with a Redundant Agent
-* The Agent registers for events from the FM to receive notice of dynamic changes in fabric hardware and FM or Host software.
+* The agent parses any agent specific HTTP Requests.  These are requests made through the agent’s client interface that target agent internal configuration and are not meant to directly manipulate Redfish objects.  Think of these as agent administration requests.  
+	- Examples:   Restart the agent, sync with a Redundant agent
+* The agent registers for events from the FM to receive notice of dynamic changes in fabric hardware and FM or Host software.
 
 
-### 5.1.1 CXL Overview
+### 5.1.1. CXL Overview
 
 Compute Express Link (CXL) is an open industry standard that defines a family of interconnect protocols to support connections between CPUs and memory expansion devices and accelerators.
 
-### 5.1.2 RESTful Agent API for CXL
+### 5.1.2. RESTful Agent API for CXL
 
-### 5.1.3 Resource URL
+### 5.1.3. Resource URL
 
-### 5.1.4 Error Messages
+### 5.1.4. Error Messages
 
-### 5.1.5 Authorization
+### 5.1.5. Authorization
 
-## 5.2 Compute Express Link (CXL)  Fabric Attached Memory
+## 5.2. Compute Express Link (CXL)  Fabric Attached Memory
 
-### 5.2.1 CXL Fabric Attached Memory (FAM) Overview
+### 5.2.1. CXL Fabric Attached Memory (FAM) Overview
 
 <TBD>
 
-### 5.2.2 Sunfish Architecture for Fabric Attached Memory 
+### 5.2.2. Sunfish Architecture for Fabric Attached Memory 
 
-This section defines the policies and requirements the Sunfish Architecture imposes on Clients and Agents when interpreting or creating Redfish models of Fabric Attached Memory (FAM) managed via the Sunfish Architecture.  
+This section defines the policies and requirements the Sunfish Architecture imposes on Clients and agents when interpreting or creating Redfish models of Fabric Attached Memory (FAM) managed via the Sunfish Architecture.  
 
-### 5.2.3 Important taxonomy used herein, within the context of discussions around FAM
+### 5.2.3. Important taxonomy used herein, within the context of discussions around FAM
 
 Producer, Memory source, Memory resource, Memory target, Memory funder: The physical entity attached to the fabric that supplies memory resources to satisfy fabric requests for memory reads and writes. This physical entity will store or recall the data being written or read.
 
@@ -474,107 +681,107 @@ Fabric Attached Memory is memory capacity that can be accessed across the fabric
 * The source of FAM is the Producer. 
 * The Consumer is the initiator of a memory request; for example a Host or a data move engine.
 
-### 5.2.4 Sunfish Policies on Modelling FAM with Redfish Objects
+### 5.2.4. Sunfish Policies on Modelling FAM with Redfish Objects
 
-All fabric Agents are expected to comply with the following Sunfish interpretations and requirements when creating Redfish models of a FAM resource on any fabric. The following discussion introduces the critical Redfish objects that are intended to model FAM resources, and declares several general required policies that fabric Agents shall follow when creating these objects. FAM is memory capacity that can be accessed across a fabric. To have a presence on a fabric, the FAM shall have at least one Endpoint on the fabric.
+All fabric agents are expected to comply with the following Sunfish interpretations and requirements when creating Redfish models of a FAM resource on any fabric. The following discussion introduces the critical Redfish objects that are intended to model FAM resources, and declares several general required policies that fabric agents shall follow when creating these objects. FAM is memory capacity that can be accessed across a fabric. To have a presence on a fabric, the FAM shall have at least one Endpoint on the fabric.
 
-A physical Endpoint shall have an associated unique fabric address that appears in the fabric transport-layer packets. This unique fabric address does not have to be visible in the Redfish Endpoint object JSON description. However, the FM/Agent stack must have the ability to translate a Redfish request targeted to a unique Redfish Endpoint object into one or more fabric-specific requests targeted at the unique fabric hardware entities.
+A physical Endpoint shall have an associated unique fabric address that appears in the fabric transport-layer packets. This unique fabric address does not have to be visible in the Redfish Endpoint object JSON description. However, the FM/agent stack must have the ability to translate a Redfish request targeted to a unique Redfish Endpoint object into one or more fabric-specific requests targeted at the unique fabric hardware entities.
 
 An Endpoint presenting physical FAM to the fabric shall have a Connected Entity linked to a single Fabric Adapter. The Fabric Adapter shall represent the physical device that fields the fabric memory requests from the fabric and produces the response packets to return to the requester. A Fabric Adapter may have multiple ports which link into the fabric. Different fabrics may have different associations of these multiple ports to fabric IDs.  A single Fabric Adapter may present more than one Endpoint on the fabric, but any given physical Endpoint object shall not have more than one associated Fabric Adapter. A Fabric Adapter may present multiple logical devices to the fabric as multiple logical Endpoints. Each logical device shall be modelled as one and only one logical Endpoint, as allowing multiple physical or logical devices to be modelled as only one Endpoint can corrupt the Redfish concept of Zones.)
 
- The Fabric Adapter device may or may not make known to the FM any details about its associated chassis / enclosure, FRU, containing assembly, or other managers of such related entities. If the FM cannot discern a specific Chassis object housing the FAM’s Fabric Adapter, the FM/Agent stack shall create a generic FAM Chassis instance and attach the Fabric Adapter to the FAM Chassis’ subordinate Fabric Adapters collection. If the Fabric Adapter’s chassis details are supplied to Sunfish by a different Agent (for example, the chassis manager’s Agent), the only clear indicator that the generic FAM Chassis instance created by the fabric Agent and the chassis described by the chassis manager’s Agent are one and the same chassis is for both Agents to fill in the same Redfish Object UUID (or its equivalent) for the Fabric Adapter they each modeled. Therefore, all fabric component instances shall posses a globally unique, vendor defined UUID that can be read by each manager that may become involved. 
+ The Fabric Adapter device may or may not make known to the FM any details about its associated chassis / enclosure, FRU, containing assembly, or other managers of such related entities. If the FM cannot discern a specific Chassis object housing the FAM’s Fabric Adapter, the FM/agent stack shall create a generic FAM Chassis instance and attach the Fabric Adapter to the FAM Chassis’ subordinate Fabric Adapters collection. If the Fabric Adapter’s chassis details are supplied to Sunfish by a different agent (for example, the chassis manager’s agent), the only clear indicator that the generic FAM Chassis instance created by the fabric agent and the chassis described by the chassis manager’s agent are one and the same chassis is for both agents to fill in the same Redfish Object UUID (or its equivalent) for the Fabric Adapter they each modeled. Therefore, all fabric component instances shall posses a globally unique, vendor defined UUID that can be read by each manager that may become involved. 
 
 The FM shall create the subordinate PORTS collection and instantiate an appropriate Fabric Adapter Port object for each physical PORT discovered on the Fabric Adapter. The Fabric Adapter, by definition must have at least one physical port connected to the fabric which claims this Endpoint. The Fabric Adapter may have additional PORTs that are connected to devices not currently modelled as Redfish Switches or Redfish Endpoints on this same fabric. For example, if the Fabric Adapter represents a multi-headed FAM module. 
 
- The FM shall discover the entirety of the FAM resources accessible through the Fabric Adapter, and shall create appropriate homogeneous Redfish Memory resource objects to describe the available memory capacity. When the FM discovers the FAM device, the FM/Agent stack is responsible for breaking up all the Memory resources the adapter presents to the fabric into homogeneous memory resource pools. Some FAM devices may declare their memory resources as specific commercially available memory devices (for example: DDR5 DIMM devices, Optane NVDIMMs).  Some FAM devices may declare their memory resources as different quantities of generic memory media types (for example: volatile RAM, persistent RAM, persistent block-mode storage). Homogeneous Memory resources may be modelled using any applicable Redfish Memory object. See example for CXL Type 3 device with homogeneous memory resources in Section TBD. Non-homogeneous Memory resources shall be modelled as an appropriate number of homogeneous Memory resources. See example for CXL Type 3 device with hybrid (volatile and non-volatile) memory resources in Section TBD.
+ The FM shall discover the entirety of the FAM resources accessible through the Fabric Adapter, and shall create appropriate homogeneous Redfish Memory resource objects to describe the available memory capacity. When the FM discovers the FAM device, the FM/agent stack is responsible for breaking up all the Memory resources the adapter presents to the fabric into homogeneous memory resource pools. Some FAM devices may declare their memory resources as specific commercially available memory devices (for example: DDR5 DIMM devices, Optane NVDIMMs).  Some FAM devices may declare their memory resources as different quantities of generic memory media types (for example: volatile RAM, persistent RAM, persistent block-mode storage). Homogeneous Memory resources may be modelled using any applicable Redfish Memory object. See example for CXL Type 3 device with homogeneous memory resources in Section TBD. Non-homogeneous Memory resources shall be modelled as an appropriate number of homogeneous Memory resources. See example for CXL Type 3 device with hybrid (volatile and non-volatile) memory resources in Section TBD.
 
- After creating the appropriate homogeneous Memory resource objects for a Fabric Adapter, the FM/Agent stack shall create one or more homogeneous Memory Domains linked to appropriate collections of the Fabric Adapter’s Memory resource objects. 
+ After creating the appropriate homogeneous Memory resource objects for a Fabric Adapter, the FM/agent stack shall create one or more homogeneous Memory Domains linked to appropriate collections of the Fabric Adapter’s Memory resource objects. 
 
 Any Fabric Adapter which acts as a producer of FAM resources to the fabric thus shall have navigation links to one or more \*homogeneous\* Memory Domain objects.
 
- If the FM/Agent stack has an a priori plan that dictates how one or more of a FAM module Fabric Adapter’s Memory Domains are to be split up into individual Memory Chunks, the FM/Agent stack shall create the desired Memory Chunks. If there are no a priori plans that dictate allocation of Memory Chunks from the various MemoryDomains, the FM/Agent stack should not create the Memory Chunks collection or any default Memory Chunk instances. Their existence at the first appearance (creation time) of a FAM module will imply such memory allocations are reserved and not available to Clients of the Sunfish Redfish Service. The Redfish bubble diagram of Figure 1 depicts the Redfish object hierarchy of a FAM object as described by the above Fabric Adapter, Memory Domains, Memory sources, and an existing Memory Chunk. Note that requirement that Memory Domains be homogeneous coupled with the definition that a Memory Chunk is a subordinate of a single Memory Domain implicitly defines a Memory Chunk to consist of homogeneous media locations from within one physical device.
+ If the FM/agent stack has an a priori plan that dictates how one or more of a FAM module Fabric Adapter’s Memory Domains are to be split up into individual Memory Chunks, the FM/agent stack shall create the desired Memory Chunks. If there are no a priori plans that dictate allocation of Memory Chunks from the various MemoryDomains, the FM/agent stack should not create the Memory Chunks collection or any default Memory Chunk instances. Their existence at the first appearance (creation time) of a FAM module will imply such memory allocations are reserved and not available to Clients of the Sunfish Redfish Service. The Redfish bubble diagram of Figure 1 depicts the Redfish object hierarchy of a FAM object as described by the above Fabric Adapter, Memory Domains, Memory sources, and an existing Memory Chunk. Note that requirement that Memory Domains be homogeneous coupled with the definition that a Memory Chunk is a subordinate of a single Memory Domain implicitly defines a Memory Chunk to consist of homogeneous media locations from within one physical device.
 
-### 5.2.5 RESTful Agent API for CXL FAM
+### 5.2.5. RESTful Agent API for CXL FAM
 
-### 5.2.6 Resource URL
+### 5.2.6. Resource URL
 
-### 5.2.7 Error Messages
+### 5.2.7. Error Messages
 
-### 5.2.8 Authorization
+### 5.2.8. Authorization
 
-## 5.3 NVMe
+## 5.3. NVMe
 
-### 5.3.1 NVMe Overview
+### 5.3.1. NVMe Overview
 
 NVM Express (NVMe) is a standard interface and protocol library developed to fully realize the benefits of Non-Volatile Memory (NVM) by accelerating access to Non-Volatile Memory Devices (e.g., SSDs).  The NVMe specification family defines how hosts communicate with non-volatile memory either directly via e.g., the PCIe interface, or indirectly, through the supported NVMe fabric gransports (e.g., RDMA, Fibre Channel, TCP).  Indirectly accessing NVMe devices over fabrics extends the low-latency, efficient, NVMe storage protocol to provide scale-out access to, and sharing of, storage from remote storage systems (e.g., storage servers, storage appliances).  NVMe maintains the same architecture and software of the NVMe protocol, providing the benefits of NVMe regardless of the fabric type or the type of non-volatile memory used in the storage target or appliance.  
 
-### 5.3.2 RESTful Agent API for NVMe
+### 5.3.2. RESTful Agent API for NVMe
 
-### 5.3.3 Resource URL
+### 5.3.3. Resource URL
 
-### 5.3.4 Error Messages
+### 5.3.4. Error Messages
 
-### 5.3.5 Authorization
+### 5.3.5. Authorization
 
-## 5.4 Infiniband Fabric
+## 5.4. Infiniband Fabric
 
-### 5.4.1 Infiniband Overview
+### 5.4.1. Infiniband Overview
 
-### 5.4.2 RESTful Agent API for Infiniband
+### 5.4.2. RESTful Agent API for Infiniband
 
-### 5.4.3 Resource URL
+### 5.4.3. Resource URL
 
-### 5.4.4 Error Messages
+### 5.4.4. Error Messages
 
-### 5.4.5 Authorization
+### 5.4.5. Authorization
 
-## 5.5 OmniPath Fabric
+## 5.5. OmniPath Fabric
 
 TBD: This may be the redundant if this is the same as IB...
 
-### 5.5.1 OmniPath Overview
+### 5.5.1. OmniPath Overview
 
-### 5.5.2 RESTful Agent API for OmniPath
+### 5.5.2. RESTful Agent API for OmniPath
 
-### 5.5.3 Resource URL
+### 5.5.3. Resource URL
 
-### 5.5.4 Error Messages
+### 5.5.4. Error Messages
 
-### 5.5.5 Authorization
+### 5.5.5. Authorization
 
-## 5.6 Gen-Z Fabric
-
-TBD
-
-### 5.6.1 OmniPath Overview
-
-### 5.6.2 RESTful Agent API for OmniPath
-
-### 5.6.3 Resource URL
-
-### 5.6.4 Error Messages
-
-### 5.6.5 Authorization
-
-## 5.7 Slingshot Fabric
+## 5.6. 5.6 Gen-Z. Fabric
 
 TBD
 
-### 5.7.1 OmniPath Overview
+### 5.6.1. OmniPath Overview
 
-### 5.7.2 RESTful Agent API for OmniPath
+### 5.6.2. RESTful Agent API for OmniPath
 
-### 5.7.3 Resource URL
+### 5.6.3. Resource URL
 
-### 5.7.4 Error Messages
+### 5.6.4. Error Messages
 
-### 5.7.5 Authorization
+### 5.6.5. Authorization
+
+## 5.7. Slingshot Fabric
+
+TBD
+
+### 5.7.1. OmniPath Overview
+
+### 5.7.2. RESTful Agent API for OmniPath
+
+### 5.7.3. Resource URL
+
+### 5.7.4. Error Messages
+
+### 5.7.5. Authorization
 
 
 
 # 6. Composability Manager (Mike/Alex/Catherine/Cayton)
 
-## 6.1 Client and Composition Layer Requirements
+## 6.1. Client and Composition Layer Requirements
 
 
 
@@ -584,18 +791,18 @@ TBD (however we should state, at a minimum, that this document generally adheres
 
 ## 6.3. Events
 
-### 6.2.2.2. Message Registry Selection and Management
+### 6.3.1. Message Registry Selection and Management
 
-### 6.2.2.3. Required Usage
+### 6.3.2. Required Usage
 
-### 6.2.2.4. Recommended Usage
+### 6.3.3. Recommended Usage
 
 - Standard Messages should be used, wherever possible.
 - OEM messages should be avoided. Suggestions for clarification or expansion of the existing registries are encouraged. (submissions should be sent to TBD)
 
-## 6.3. Discovering resources via Sunfish
+## 6.4. Discovering resources via Sunfish
 
-## 6.4. Class Of Service requirements
+## 6.5. Class Of Service requirements
 
 # 7. Annex A: Bibliography
 
@@ -609,7 +816,7 @@ The informational references are summarized in Table A.1.
 
 | Tag  | Title (Version) | Author | URL  |
 | ---- | --------------- | ------ | ---- |
-|      |                 |        |      |
+|  1   | Redfish Message Registry (2023.3)|  DMTF      |   https://www.dmtf.org/dsp/DSP2065    |<a id="ref-events-registry"></a> 
 |      |                 |        |      |
 |      |                 |        |      |
 |      |                 |        |      |
@@ -621,9 +828,9 @@ The informational references are summarized in Table A.1.
 |      |                 |        |      |
 
 Table A.1: Informational References
-# 8 Appendix B: Sunfish Requirements For Redfish Modelling 
+# 8. Appendix B: Sunfish Requirements For Redfish Modelling 
 
-## 8.1. HTTP status codes5
+## 8.1. HTTP status codes
 
 ### 8.1.1. Create
 
@@ -631,10 +838,10 @@ Table A.1: Informational References
 
 ### 8.1.3. Actions
 
-## 8.2  Sunfish Requirements for Redfish Models of FAM
+## 8.2. Sunfish Requirements for Redfish Models of FAM
 
-## 8.3  Sunfish Requirements of Redfish Models of GPU pools
+## 8.3. Sunfish Requirements of Redfish Models of GPU pools
 
-## 8.4	Redfish Models of Host Compute Systems
+## 8.4. Redfish Models of Host Compute Systems
 
-## 8.5  Redfish Models of Boundary Components
+## 8.5. Redfish Models of Boundary Components

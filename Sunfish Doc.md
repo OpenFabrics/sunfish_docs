@@ -290,8 +290,6 @@ Sunfish is designed to configure fabric interconnects and manage composable, dis
 does this through a universal set of RESTful interfaces and tools and services to manage fabric attached resources, such as, CPUs, Accelerators, and Memory Devices. Sunfish uses the common languages of Redfish and Swordfish, to allow clients to gather telemetry information on fabrics
 and components, request information about fabric attachments, allocate components, and compose disaggregated systems. Each vendor specific fabric can be controlled and manipulated through the use of a custom agent that is designed to provide its services and functions to Sunfish via the Redfish API.  The following figure presents the concepts of the Sunfish Framework in visual form. 
 
-<TBD: Insert figure reference to image below>
-
 
 ![Sunfish Purpose in Simple Form](imgs/Sunfish_purpose_block_012824.png)
 
@@ -306,7 +304,7 @@ The figure above makes several important points:
 ## 4.1 Components of the Sunfish Framework
 Figure <TBD: Insert figure reference to image below> depicts the major software components (layers) that make up the architecture of the Sunfish Open Fabric Management Framework:
 
-![image](imgs/Sunfish_detailed_blocks_012824.png)
+![Sunfish Major Software Components](imgs/Sunfish_detailed_blocks_012824.png)
 
 
 CDI requires some modest amount of scale, which in turn likely requires a Redfish representation of many different resource types residing on different interconnects, all supplied by different vendors.  Disaggregated resources and interconnect fabrics may or may not support a Redfish API suitable for directly plugging into the Sunfish management framework, so the presence of an API translating Agent entity is used in all cases, though the complexity of any given Agent obviously depends upon the actual fabric management APIs and policies in use in the hardware managers’ realm. Sunfish not only collects and manages the Redfish object models for disaggregated resources and the fabrics that connects them, but also serves up control points for many common management tasks, such as Events and Logs, Access Control settings and policies, and authentication needs.
@@ -436,27 +434,33 @@ TBD
 
 ## 4.5 Sunfish Interpretation of the Redfish Fabric Model
 
-The following diagram depicts a simple Redfish model of a simple CXL fabric that has two switch hops between a host CPU and a Fabric Attached Memory controller.
+The following diagram depicts a simplified Redfish model of a CXL fabric that has two switch hops between a host CPU and a Fabric Attached Memory (FAM) controller.
 
-<  new image 1>
 
-The fabric itself (i.e., the physical connectivity) is modelled as **ports** and **endpoints**. Physical fabric connections (e.g., cables) are always shown as between 'Ports'. Ports are traced back to the fabric devices that drive the ports. Fabric devices trace back to physical or logical infrastructure which controls the fabric device and to the 'Endpoint' object associated with the fabric device.  In the diagram above, the physical fabric links have been highlighted as red dotted links.  
 
-The host is modeled as a CXL compute **System** with a **CPU** that has a CXL port linked to the fabric **Switch** CXL1.  The FAM controller is modeled as a **Fabric Adapter** that has a CXL port connected to the fabric at switch CXL2.  The Fabric Adapter object is linked to the **Memory** sources that supply the **Memory Domain** (memory pools) from which **Memory Chunks** (blocks of accessible memory capacity) are allocated.  The host is an Endpoint on the fabric, as is the Fabric Adapter.
+![Redfish_2Switch_topo](imgs\Redfish_2Switch_topo.PNG)
 
-The following diagram has removed the physical link details to focus on the modelling of the more logical resources such as compute resources, FAM resources, and logical paths and connections between them.
+The fabric itself (i.e., the physical connectivity) is modelled as **Ports** and **Endpoints**. Physical fabric connections (e.g., cables) are always shown as between 'Ports'. Ports are traced back to the fabric devices that drive the ports. Fabric devices trace back to physical or logical infrastructure which controls the fabric device and to the 'Endpoint' object associated with the fabric device.  In the diagram above, the physical fabric links have been highlighted as red dotted links.  
 
-<  new image 2>
+The host is modeled as a CXL compute **System** with a **CPU** that has a CXL port linked to the fabric **Switch** CXL1.  The FAM controller is modeled as a **Fabric Adapter** that has a CXL port connected to the fabric at Switch CXL2.  The host is an Endpoint on the fabric, as is the Fabric Adapter.  The model above shows the two Switches have associated Endpoints, but that is often not the case. Switches are only modeled as Endpoints on the fabric if they source or sink fabric traffic.  Most switches will only source and sink management plane traffic and not data plane traffic so they often have no Endpoints associated because the Redfish model is of the data plane.  
 
-An endpoint can be viewed as a destination, such as a server connected by a network card or a switch port. A resource can be considered as a component such as a memory controller that provides services or resources to a fabric.   The physical topology dictates which resources (Endpoints) have a physical path over which they might communicate.  In Redfish fabrics, which physical paths are enabled between two Endpoints is specified by listing those Endpoints in a **Zone.** 
+An Endpoint can be viewed as a destination, such as a server connected by a network card or a switch port. A resource can be considered as a component such as a FAM memory controller that provides services or resources to a fabric.   The physical topology dictates which resources (Endpoints) have a physical path over which they might communicate.  The definition of a *switched* fabric implies all Endpoints of the fabric have physical paths over which they might communicate.  There usually is a way to limit which Endpoints may communicate with which other Endpoints.  The actual mechanism used is fabric-specific, as in vLans on Ethernet.  In Redfish fabrics, which physical paths are enabled between two Endpoints is specified by listing those Endpoints in a **Zone.** 
 
-A zone can be viewed as a set of endpoints (and resources behind those endpoints) that are allowed to pass traffic among the zone members, such as the compute nodes and storage nodes of a compute cluster.  For example, zone descriptions can determine switch route table contents and thus enable all traffic between zone members.  
+A Zone can be viewed as a set of Endpoints that are allowed to pass traffic among the Zone members, such as the compute nodes and FAM nodes of a compute cluster.  Zone descriptions can be used to determine the switches' route table contents to enable traffic between Zone members. A **zone-of-zones** can be considered to be a collection or union of Zones.
 
-An abstract model in the ‘Redfish/Swordfish domain’ can be modeled as a group of endpoints, resources, zones, and **zones-of-zones**. An endpoint can be considered to be a destination, such as a server connected by a network card or a switch port.  A resource can be considered as a component that provides services to a fabric. A zone can be considered to be a set of endpoints and resources that provide an integrated unit, such as a collection of remote memory.  A **zone-of-zones** can be considered to be a collection or union of zones.
+The following diagram has removed the physical link details to focus on the modelling of the more logical resources such as compute resources, FAM resources, and logical paths and connections between them.  This diagram shows only one host system,  and one FAM module as Endpoints (I3 and T2, respectively) on the CXL fabric.  Endpoints are Initiators or Targets of traffic; the Switches are not shown as they only relay traffic and are not visible in the data plane.  
 
-Finally, a **Connection** specifically enables one endpoint entity to access some or all resources presented to the fabric by another endpoint.  For example, a specific Memory Chunk which represents only a small portion of the total memory available behind the T2 endpoint may be named in a connection between two endpoints. If the host and the FAM controller are in the same zone the fabric will route any request from the host endpoint to the FAM endpoint.  However, if the host’s request is not targeted to the Memory Chunk named in the connection, the FAM controller is supposed to reject the request.
+![Redfish_FAM_ Model](imgs\Redfish_FAM_ Model.PNG)
 
-Discovery of physical and logical resources accessible via the fabric is necessarily a fabric-specfic operation.
+ 
+
+Redfish models all fabric attached memory devices as a Fabric Adapter that moves traffic to or from the physical port attached to the fabric and transitions such traffic to accesses of memory resources 'behind' the Fabric Adapter.  
+
+The Fabric Adapter object is linked to the **Memory** sources that supply the actual memory media.  The Memory sources are linked to the Redfish **Memory Domain** (memory pools) from which blocks of accessible memory capacity are allocated as **Memory Chunks**.  We have already stated that for the host associated with Endpoint I3 to have a physical path through the fabric to the FAM module Endpoint T2, a Redfish Zone 1 must contain both Endpoints.  However, Zones do not provide fine grained permissions for subsets of the resources within an Endpoint, as would be necessary for managing multi-tenant Endpoints.  If Fabric Adapter 2 in the above figure had more than one Memory Chunk mapped to the fabric, the Redfish Zone does not contain a limitation of which Memory Chunks a given Initiator Endpoint in the Zone may access. 
+
+Thus Redfish declares that a **Connection** specifically enables one Endpoint entity to access some or all resources presented to the fabric by another Endpoint.  For example, a specific Memory Chunk which represents only a small portion of the total memory available behind the T2 Endpoint may be named in a Connection between two Endpoints. If the host and the FAM controller are in the same Zone the fabric will route any request from the host Endpoint to the FAM Endpoint.  However, if the host’s request is not targeted to the Memory Chunk named in the Connection, the FAM controller is supposed to reject the request.
+
+Discovery of physical and logical resources accessible via the fabric is necessarily a fabric-specific operation.  Fabric-specific requirements for the creation and interpretation of Redfish fabric objects are listed in Appendix TBD. 
 
 # 5. Sunfish Hardware Agents
 
@@ -646,11 +650,9 @@ This section defines the policies and requirements the Sunfish Architecture impo
 
 **Regions vs  MemoryRegions:** *Regions* are sub-sets of memory media capacity in the Redfish schema for *Memory*.  The CXL spec defines something completely different called a *Dynamic Capacity Memory Region* (DC Region for short) that Redfish has named a **MemoryRegion**.  The *MemoryRegion* object is a subordinate of the CXL Logical Device object and therefore currently a CXL-specific object.  *Regions* is a property within the *Memory* object.
 
-The Redfish bubble diagram of Figure 1 depicts the Redfish object hierarchy of a FAM object as described by the above Fabric Adapter, Memory Domains, Memory sources, and an existing Memory Chunk. Note that requirement that the Memory Domains be homogeneous coupled with the definition that a Memory Chunk is a subordinate of a single Memory Domain implicitly defines a Memory Chunk to consist of homogeneous media locations from within one physical device.
+![Redfish_FAM_Model_3](imgs\Redfish_FAM_Model_3.PNG)
 
-![Redfish FAM Model](imgs\Slide9.PNG)
-
-figure on FAM bubbles
+The Redfish bubble diagram in the above figure depicts the Redfish object hierarchy of a FAM object as described by the above Fabric Adapter, Memory Domains, Memory sources, and an existing Memory Chunk. See Section 4.5. for details. Note that requirement that the Memory Domains of a FAM device be homogeneous, coupled with the definition that a Memory Chunk is a subordinate of a single Memory Domain implicitly defines a Memory Chunk to consist of homogeneous media locations from within one physical device.
 
 ### 8.1.2. Sunfish Requirements for Redfish Models of  FAM
 
@@ -683,9 +685,9 @@ In the following tables, the column header definitions apply:
   - For example, the structure:
 
      Links {
-    	Endpoints [ { 
-    		@odata.id 
-    	} ]
+      	Endpoints [ { 
+      		@odata.id 
+      	} ]
 
     }
 

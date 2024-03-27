@@ -485,11 +485,11 @@ and components, request information about fabric attachments, allocate component
 
 ![Sunfish Purpose in Simple Form](imgs/Sunfish_purpose_block_012824.png)
 
-The figure above makes several important points:
-* On the right we have our disaggregated resources with potentially many different management entities in direct control using vendor and device specific means.
-* We need an Agent layer (‘provider’) to aggregate the inventory from one or more hardware managers and convert the hardware specific device and resource descriptions into a publicly accepted and commonly interpreted Redfish model.
-* The Agent hands this whole model over to the Sunfish Services. This effectively ‘hides’ much of the hardware specific details from the clients. 
-* Clients of Sunfish Services see the Redfish models of resources and manipulate these models to establish or alter the state of individual resources or their assignments (bindings) to consumers (e.g. hosts).
+Figure <TBD - insert refernce to Sunfish_purpose_block image> makes several important points:
+* On the right are shown disaggregated resources with management entities in direct control using vendor and device specific methodology.
+* The Agent layer (‘provider’) aggregates the inventory from one or more hardware managers and converts the hardware specific device and resource descriptions into a publicly accepted and commonly interpreted Redfish model.
+* The Agent hands the whole model over to the Sunfish Services which abstracts much of the hardware specific details from the clients. 
+* Clients of Sunfish Services see the Redfish models of resources and manipulate these models to establish or alter the state of individual resources or their assignments (bindings) to consumers (e.g., hosts).
 * It is critical that Agents and Clients have the same interpretation of a Redfish object found in the Sunfish database, so the Sunfish framework also has policies and requirements to be followed when creating or interpreting the Redfish models.
 
 ## 4.3. Interactions Between Sunfish and Hardware Agents

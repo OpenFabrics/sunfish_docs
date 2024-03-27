@@ -596,7 +596,7 @@ To discern whether the current state of a Core Service, an Agent instance or a h
 It becomes necessary for the restarting or newly attaching hardware manager or Agent to locate that next entity in the Sunfish Framework, re-register with it, and notify it of new or possibly updated inventory and state is available. The Agent or Sunfish Core Service is responsible for detecting the possible scenarios:
 
 - New hardware manager reporting existing inventory (e.g., hardware manager restart)
-- Old hardware manager reporting inventory change (e.g., rebooted hardware, hot-plug-add of new hardware, hot-plug-remove of existing hardware)
+- Old hardware manager reporting inventory change (e.g., rebooted hardware)
 - New Agent reporting existing inventory (e.g., Agent restart)
 
 The basic process is the same for any of the detected restarts or fail overs: Sunfish Core eventually learns of new or updated inventory and re-fetches the entire fabric inventory. However, Sunfish Core Services **shall** cross reference the UUIDs of all fetched Redfish objects with all UUIDs of the existing Sunfish Core Redfish tree looking for duplicate UUIDs with different Redfish URIs and resolve the disconnects. 

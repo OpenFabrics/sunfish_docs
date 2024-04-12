@@ -268,50 +268,59 @@ This document conforms to ISO/IEC Directives, Part 2 for keyword usage. The most
 
 ## 3.1. Introduction
 
-TBD: Explain how this chapter is organized (purpose of Sunfish, define CDI, value proposition of CDI, value proposition of Sunfish relative to CDI / Justify Sunfish. Go into Composable Network/fabric Infrastructure)
+Sunfish is a centralized management platform for Composable Disaggregated Infrastructure (CDI).  Sunfish provides a method by which compute resources, that are attached by high speed, low latency networks, can be assembled together and managed as if the components were part of a traditional compute server.  The networks can be CXL/PCIe, RDMA, or even Ethernet networks.  
+
+The idea of Sunfish came out of the realization that compute material resources could be managed using Redfish and Swordfish.  In creating the overall architecture of Sunfish, Redfish became the central database management and attached components, communicating using Redfish commands became clients to the running state of the database.   
+
+This chapter provides a description of the Sunfish database and attached components that provide organized assembly of material resources and managers that provide the hardware associations used in assembly.
 
 ### 3.1.1. Overview of Composable Disaggregated Infrastructure
 
-<TBD: Mike - Make this more concise. Cut down the length of the value props as much as possible - this is an orientation, not a defense/justification>
+With Composable Disaggregated Infrastructures, computational resources are not statically provisioned in servers, but instead are physically disaggregated in shared pools and connected through high-speed/low-latency network fabrics. These resources may be dynamically provisioned and re-provisioned to client applications, as needed, and are thus not only more efficient to manage by removing unnecessary hardware, but help reduce energy consumption and datacenter cooling costs.  CDI enables assigning of pools of resources to consumers.  Remote resource disaggregation is already common for storage devices (e.g., NVMe-oF); current trends are pushing this paradigm further, extending it to assigning private or shared resources such as computational engines, disaggregated memory elements, disaggregated accelerators, and eventually to all forms of compute resources required by modern HPC applications. 
 
-Traditional HPC compute clusters are created by combining separate compute servers over a shared network fabric. Each individual compute server in the cluster is statically provisioned with its own CPUs, memory devices, accelerator cards, and storage devices to accommodate as many different application runtime requirements as possible. This need to incorporate “all of the options that may be required to support a given workload” often results in resource overprovisioning, makes traditional HPC architectures less flexible and less efficient, and can lead to situations where application jobs are more prone to run-time failure. Resources overprovisioning and inefficient use of hardware are common issues to any large scale computing facility.
+CDI provides some easing of issues for problems that are currently plaguing today's HPC and Cloud architectures.  In current, HPC and Cloud compute architectures, compute clusters are created by combining separate compute servers over a shared network fabric. Traditional compute servers, in the cluster, are statically provisioned and assembled with their own CPUs, memory devices, accelerator cards, and storage devices contained within a fixed size box.   The need to incorporate “all of the options that may be required to support a given workload” often results in resource over-provisioning, makes traditional HPC architectures less flexible and less efficient, and can lead to situations where application jobs are more prone to run-time failure. Wasted resources make traditional HPC architectures less flexible and less efficient, and can lead to situations where application jobs are more prone to run-time failure. Resource over-provisioning and inefficient use of hardware are common issues to any large scale computing facility.  
 
-E.g., design considerations that lead to an under estimation of compute server memory resources can cause out-of-memory conditions. In another example, IO server memory oversubscription can result in filesystem failure and can occur due to virtual memory page swap thrashing, and lead to eventually application failure. The above issues could be mitigated with the dynamic addition of memory.
+For instance, in one Use-Case, CDI can help mitigate Out of Memory (OOM) issues.  It is considered standard practice in HPC and Cloud environments to run compute nodes 'diskless', using NFS file shares.  Virtual Memory is used to share both the running compute image and a running set of batch jobs.  Because of this fact, oversubscribed and ill-planned batch job and container batch job requests can lead to an under estimation of compute server memory resources that cause OOM conditions, in practical HPC and Cloud operation. Competition for limited memory resources can lead to batch job failure.  Even in a single node that is sharing computations using message passing, an out-of-memory condition will be cause for the entire computation to fail.  Competition for limited compute server memory resources can cause out-of-memory conditions. In another example, IO server memory oversubscription can result in virtual memory page issues, cause for an entire batch computation to fail. The above issues could be mitigated with the dynamic addition of memory.
 
-Another issue with the architectural inflexibility of current, siloed, HPC architecture is that it frequently results in overprovisioned or stranded resources. Stranded resources are those that are either are on a compute server that, due to a lack of other resources (e.g., CPU), is unavailable to a workload, or that have been assigned to a workload that isn’t making use of them. Overprovisioned resources are those that are either underused, or unused and idle for the current workloads but still draw energy and cooling.
+Where on-disk memory is provided to a compute node, IO server memory oversubscription can result in filesystem failure and can occur due to virtual memory page swap thrashing, and lead to eventually application computation slowness and possible failure. 
 
-The facility costs of large scale HPC systems including cooling and energy usage is becoming more of an issue. The overall scale might not seem worrying but looking at single countries, data centres can account for a significant portion of the overall yearly consumption.
+The facility costs of large scale HPC systems including cooling and energy usage is becoming more of an issue. The overall scale might not seem worrying but looking at single countries, data centres can account for a significant portion of the overall yearly consumption.  The architectural inflexibility of current, siloed, HPC architecture is that it frequently results in over-provisioned or stranded resources. Stranded resources are those that are either are on a compute server that, due to a lack of other resources (e.g., CPU), is unavailable to a workload, or that have been assigned to a workload that isn’t making use of them. Overprovisioned resources are those that are either underused, or unused and idle for the current workloads but still draw energy and cooling.
 
-A solution to addressing the overprovisioning and computational efficiency limitations, as well as hardware and operating costs, of integrated, siloed, systems is the use of Composable Disaggregated Infrastructures (CDI).
+A solution to addressing the over-provisioning and computational efficiency limitations, as well as hardware and operating costs, of integrated, siloed, systems is the use of Composable Disaggregated Infrastructures.
 
-With CDI, computational resources are not statically provisioned in servers, but instead are physically disaggregated in shared pools and connected through high-speed/low-latency network fabrics. These resources may be dynamically provisioned and re-provisioned to client applications, as needed, and are thus not only more efficient to manage by removing unnecessary hardware, but help reduce energy consumption and data center cooling costs.
-
-CDI enables assigning pools of resources to consumers. Remote resource disaggregation is already common for storage devices (e.g., NVMe-oF); current trends are pushing this paradigm further, extending it to assigning private or shared resources such as computational engines, disaggregated memory elements, disaggregated accelerators, and eventually to all forms of compute resources required by modern HPC applications.
-
+With Composable Disaggregated Infrastructures, computational resources are not statically provisioned in servers, but instead are physically disaggregated in shared pools and connected through high-speed/low-latency network fabrics. These resources may be dynamically provisioned and re-provisioned to client applications, as needed, and are thus not only more efficient to manage by removing unnecessary hardware, but help reduce energy consumption and datacenter cooling costs.
 
 ### 3.1.2. Managing Composable Disaggregated Infrastructure
 
-The larger the HPC system, the greater the potential impact of dynamic composability of disaggregated components to energy efficiency and computational stability. Composability managers are needed to efficiently connect workloads with resources in a dynamic ecosystem, at scale, without concern for the management model of the underlying hardware technology; in addition, centralized composabilty management must be scalable to be able to handle massive amounts of hardware telemetry, device states, device capabilities, and subscription information from large numbers of resources.
+The larger the HPC or Cloud system, the greater the potential impact of dynamic CDI to energy efficiency and computational stability. Composability managers are needed to efficiently connect workloads with resources in a dynamic ecosystem, at scale, without concern for the management model of the underlying hardware technology; in addition, centralized Composabilty Management must be scalable to be able to handle massive amounts of hardware telemetry, device states, device capabilities, and subscription information from large numbers of resources.
 
-Disaggregated resource types are increasingly being accessed over a variety of fabric types and technologies; and being able to fully orchestrate these resources in a dynamic, heterogeneous environment requires managing those fabrics and the hardware resources that may be accessed thereon. 
+Using centrally managed CDI on large-scale resources can lead to more efficient distribution of the resources, increased batch run performance, and allow measurable performance where efficient resource scheduling is as important as physical HPC size.  As such, it has now been recognized that integration of newer HPC Workload Managers and Container deployment systems should be part of a master plan for centralized CDI management.  With aggregation of resources to meet prospective batch run requirements, CDI aggregation of resources should be made only after full verification that those aggregations can be made successfully.  In the event that even a portion of the aggregation fails, the entire allocation of nodes of a run-time should fail and be returned to a consistent previous state where another, more valid request can be made.
+
+It has to be noted that remote components are connected through network fabrics.  Because CDI resource types are increasingly being accessed over a variety of fabric types and technologies; a centralized CDI management system must be able to fully orchestrate these resources in a dynamic, heterogeneous environment.  A centralized CDI management system is required to manage those fabrics and the hardware resources that are connected to the fabric endpoints, as a composable atomic unit of resource. 
 
 The management and optimization of such a diverse set of fabrics and fabric technologies to realize the benefits of Composable Disaggregated Infrastructures is quickly becoming a complex issue to solve for infrastructure managers, especially in heterogeneous multi-vendor environments, with multiple vendor-sourced hardware and the ever-expanding collection of proprietary APIs and tools.
 
 ### 3.1.3. Sunfish/CDI Value Propositions
 
+Sunfish and its components provide scalable central CDI management for HPC and Cloud systems.  The core component of Sunfish, the Redfish/Swordfish database as acts source of both aggregation and resource attachment 'truth' for the current state of the running system.  Connected Resource Agents provide real-time interaction with hardware and network components and are tasked with providing 'real world' hardware execution.  A Composability Manager allows for complex integration with both Workload and Container Deployments.  Also, the Composability Manager is able to make attempted associations with the resource components.  The Composability Manager is designed to heuristically integrate with client Workload and Container deployment systems.  This is accomplished through the use of graph databases that can potentially allow clients to review recorded changes that that have occurred within the overall system and are recorded in the Sunfish Core.
 
-#### 3.1.3.1. More Efficient Sharing of Resources Through Resource Pools
+#### 3.1.3.2  More Efficient Sharing of Resources Through Resource Pools
 
-In current computing systems, hardware resources that are necessary to provide every type of computation must be installed into the compute nodes. This type of architectural design leads to wasted resources and limitations on the resources that are available to user jobs.
-For instance, if a user job requires six GPUs, 1 TB of on-board memory, and eight CPU cores in each node to complete a batch job, then the job cannot be run on a cluster where nodes only have four GPUs and four CPU cores. In addition, if a batch job needs two GPUs and two CPU cores, the remaining two GPUs and two CPU cores on the assigned node are wasted resources that can't be allocated to other 'needy' batch jobs.
+In current HPC systems, hardware resources that are necessary to provide every type of computation must be installed into the compute nodes. Batch job execution, whether through a Workload Manager or through a Container deployment, is generally done through priorities and back-fill.  Each batch job occupies a portion size of a fixed size 'box' of resources.  This type of parallel architectural system design leads to both stranded and wasted resources and limitations on the resources that are available to user jobs. For instance, if a user job requires six GPUs, 1 TB of on-board memory, and eight CPU cores in each node to complete a batch job, then the job cannot be run on a cluster with four GPUs and four CPU cores. In addition, if a batch job needs two GPUs and two CPU cores, two GPUs and two CPU cores are wasted resources that can't be allocated to other 'needy' batch jobs.  A Workload Manager or a Container Deployment system can be considered 'Client Batch Requestors' (CBRs).  Through heueristic integration with CBRs, more efficient time-based deployment of Virtual node (VN) compute nodes, with the best available resource associations can potentially lead to higher overall batch throughput and lower cost of operation.
 
-In a composable disaggregated system <TBD: Insert hyperlink reference to the appropriate figure>, resource pools can allocate CPU cores, NVMe memory devices, GPUs, and FPGAs from available hardware pools, aggregating them over high-speed interconnection fabrics (e.g., RDMA, CXL, etc.). Hardware resources that are combined in such a manner provide versatility to batch jobs and mitigation of wasted resources. 
+In a new composable HPC system <TBD: Insert hyperlink reference to the appropriate figure>, resource pools can allocate CPU cores, NVMe memory devices, GPUs, and FPGAs from available hardware pools, through aggregated RDMA and CXL fabrics. Hardware resources that are combined in such a manner provide versatility to batch jobs and mitigation of wasted resources. In addition, if a compute node is using only a single CPU core and a GPU is not being utilized, the GPU can be allocated to another compute node that needs the GPU to fulfill the requirements of its own batch job.
+
+![img](https://www.openfabrics.org/wp-content/uploads/ofmfwg/2022-12-updates/Slide7.jpeg)
+
+Heuristic integration of CBRs with Sunfish CDI management through a Composability Manager allows Sunfish to both scale to the actual physical hardware size of a target system.  In our Composability Management framework, we are creating a queued stateful method of handling and verifying VN requests from the CBRs to provide a locking mechanism to prevent collisions from conflicting VN requests and ensure that efficient and stable configurations of VNs are capable of being made.  
+
+In the event that the a requested and pre-scheduled configuration is not achievable or because of hardware failure, the entire request fails, the current resource allocation state of the machine is maintained, and a notification is sent to the CBRs.  In the event that the allocation is unable to be performed, the CBRs can then remake an overall allocation of VNs request.
 
 <TBD: Insert figure reference to image below>
 
 ![img](https://www.openfabrics.org/wp-content/uploads/ofmfwg/2022-12-updates/Slide7.jpeg)
 
-#### 3.1.3.2. Sharing of Memory resources
+#### 3.1.3.3. Sharing of Memory resources
 
 The CXL 3.1 specification enables remote memory to be pooled or shared. The figure below shows a simple example of memory sharing. On the left side, the orange node is connected to the orange NVMe memory through a CXL switch. On the right side, the CXL components have been configured to allow the orange node to take a smaller portion of a shared NVMe memory. The blue node, needing more memory resources, has a portion of the shared memory and another CXL memory, again connected via a CXL fabric switch. Each of these CXL devices and switches potentially have their own hardware manager entities, each of which must be informed of the required configuration details. The Sunfish Framework provides administrators a single API through which to manage all these different components.
 
@@ -319,8 +328,7 @@ The CXL 3.1 specification enables remote memory to be pooled or shared. The figu
 
 ![image-20231222105329458](C:\Users\pccayton\AppData\Roaming\Typora\typora-user-images\image-20231222105329458.png)
 
-#### 3.1.3.3. Sharing of Storage Resources
-
+#### 3.1.3.4. Sharing of Storage Resources
 
 Node-local parallel filesystems (e.g., BeeGFS, Lustre) provide ephemeral scratch space to keep inter-node IO traffic localized. In many cases, the best way to implement the back-end block devices for these node-local parallel filesystems is with RAM disks. On-demand parallel filesystems are implemented with management, metadata targets and object storage (see the figure below). The amount of allocated RAM disk storage must provide enough space to accommodate growth of metadata and object storage stripes. Communication between the parallel filesystem components can be performed via Ethernet but is more commonly performed with RDMA to reduce communication latency and improve bandwidth. In current HPC and Cloud architectures, using RAM disk block devices consumes compute nodes's RAM and reduces the amount of memory available to running processes.
 
@@ -329,6 +337,20 @@ In a composable parallel computing system, a better option is to deploy requeste
 <TBD: Insert figure reference to image below>
 
 ![img](https://www.openfabrics.org/wp-content/uploads/ofmfwg/2022-12-updates/Slide5-4.jpeg)
+
+##### 3.1.3.3.2 DAOS Composable Management
+
+Figure TBD <TBD: Insert hyperlink to the appropriate figure> shows a composable implementation of Distributed Asynchronous Object Storage ([DAOS](https://docs.daos.io/v2.2/overview/architecture/)) utilizing CXL peer-to-peer switches and NVMe memories providing Pool Shard blocks of storage for DAOS targets.  Each of the nodes can be configured as a DAOS container. Connections to the Object Storage are through an NDR RDMA switch.
+
+![img](https://www.openfabrics.org/wp-content/uploads/ofmfwg/2022-12-updates/Slide21.jpeg)
+
+3.1.3.5 Composable Accelerators
+
+The cost of acquiring, maintaining, sharing, and cooling computational accelerators has begun to be an issue for large-scale parallel systems, such as HPC and Cloud computing platforms.  CDI, through the use of fabrics and CXL can help provide accelerator resources, peer-to-peer, where they are needed in batch computations.
+
+##### 3.1.3.5.1 Composable GPU Management
+
+GPUs can be managed by Sunfish as part of network fabric attached pools, or through CXL switches as part of a, heuristically assigned and timed, peer-to-peer resource sharing architectural arrangement, across VN compute nodes.  The Sunfish Core database provides entry links that reflect the current attachment arrangement.  The Sunfish Composability Manager state graph database, allows the CBRs to explore dynamic VN associations and constructions while a pre-testing graph database allows the CBRs to explore the potential associations and aggregations that are possible from within the current cluster state.  
 
 ## 3.2. Sunfish Framework Scope
 

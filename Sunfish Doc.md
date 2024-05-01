@@ -297,8 +297,15 @@ In current non-CDI HPC systems, hardware resources necessary to support every ty
 Some workload managers or container deployment systems are very capable of time-sharing many of the multi-tasking resources within their control and thereby optimizing the utilization of those resources during the execution of the job streams on cluster sizes for which they are designed.  Bringing multiples of such workload managers or deployment systems into a composable HPC environment then requires a methodology for composing smaller, virtual clusters which can be handed over to these  'virtual cluster managers' which are tailored to specific classes of workloads.  In large HPC installations, there can be hundreds or thousands of virtual cluster managers watching over their private, composable resource pools, so it is essential the Sunfish Composability Services are architected to be hierarchically scalable.  
 
 #### 3.1.3.2. Sharing of Memory resources
+<WIP>
+A Dynamic Capacity Device (DCD) <TODO Insert reference> is a CXL memory device that implements dynamic capacity. The dynamic capacity feature allows a compute node's memory capacity to change, without the need for rebooting the node.  DCD provides hot-plug capabilities essential for true disaggregated compute infrastructure.  
 
-The CXL 3.1 specification enables remote memory to be pooled or shared. [Figure 1](#sharing-mem-resources-fig) shows a simple example of memory sharing. On the left side, the orange node is connected to the orange NVMe memory through a CXL switch. On the right side, the CXL components have been configured to allow the orange node to take a smaller portion of a shared NVMe memory. The blue node, needing more memory resources, has a portion of the shared memory and another CXL memory, again connected via a CXL fabric switch. Each of these CXL devices and switches potentially have their own Hardware Manager entities, each of which must be informed of the required configuration details. The Sunfish Framework provides administrators a single API through which to manage all these different components.
+Weighted NUMA interleaving allows heuristic distributibution of memory resources across nodes.
+
+As client applications request virtual clusters of nodes, DCD windowing provides the nodes with the ability to be quickly used and re-utilized while reducing the latency time of reallocation.
+
+----<TODO - need new picture and description below>----
+On the left side, the orange node is connected to the orange NVMe memory through a CXL switch. On the right side, the CXL components have been configured to allow the orange node to take a smaller portion of a shared NVMe memory. The blue node, needing more memory resources, has a portion of the shared memory and another CXL memory, again connected via a CXL fabric switch. Each of these CXL devices and switches potentially have their own Hardware Manager entities, each of which must be informed of the required configuration details. The Sunfish Framework provides administrators a single API through which to manage all these different components.
 
 <a id="sharing-mem-resources-fig"></a>
 <p align="center">

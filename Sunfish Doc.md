@@ -6,9 +6,9 @@
 
 Version 0.3
 
-**ABSTRACT:** Sunfish is designed for managing composable disaggregated resources over multiple fabrics using a central repository and an open-source API and toolset. Sunfish is designed for manipulating connected hardware resources using client-friendly RESTful abstractions and configuring fabric interconnects so that datacenter and AI workloads can be linked with available resources over dynamic fabric infrastructures. 
+**ABSTRACT:** Sunfish is designed to manage composable disaggregated resources across multiple fabrics using a central repository and an open-source API and toolset. It provides client-friendly RESTful abstractions for manipulating connected hardware resources and for configuring fabric interconnects, enabling datacenter and AI workloads to link with available resources over dynamic fabric infrastructures.
 
-The Sunfish OpenFabrics Management Framework API defines a RESTful interface and a standardized data model to provide data structures to help simplify the development of composable distributed, disaggregated, computer architectures. Sunfish contains abstract data structures that represent computer system resources, available network fabric components and management, current resource operational conditions, and abstracted representations of composed disaggregated computing systems.
+Sunfish is an implementation of an OpenFabrics Management Framework API that defines a RESTful interface and a standardized data model to provide data structures to help simplify the development of composable distributed, disaggregated, computer architectures. Sunfish contains data structures that represent abstracted computer system resources, available network fabric components and management, current resource operational conditions, and representations of composed disaggregated computing systems.
 
 *Last Updated 04/23/2024*
 
@@ -52,9 +52,9 @@ The most current revision can be found on the OFA web site at [https://github.co
 
 **Contact the OpenFabrics Alliance (OFA)**
 
-Current OFA practice is to make updates and other information available through the OFA Sunfish github site: https://github.com/OpenFabrics, look for the repositories beginning with "sunfish_".
+Current OFA practice is to make updates and other information available through the OFA github site: https://github.com/OpenFabrics, look for the repositories beginning with "sunfish_".
 
-Requests for interpretation, suggestions for improvement, additions, or defect reports are very welcome. They should be sent via [ofmfwg@lists.openfabrics.org](ofmfwg@lists.openfabrics.org).
+Requests for interpretation, suggestions for improvement, additions, or defect reports are very welcome and may either be sent via [ofmfwg@lists.openfabrics.org](ofmfwg@lists.openfabrics.org) or filed as an issue on the appropriate Sunfish Github repository.
 
 **VERSIONING POLICY**
 
@@ -173,17 +173,16 @@ The OFA OFMF Working Group, which developed and reviewed this work in progress, 
 
 Sunfish is designed for system administrators, application programmers and users, HPC and cloud architecture designers, and other stakeholders that are involved in the design, deployment, and use of distributed computing systems based on multiple high-speed network fabrics for disaggregating hardware components.
 
-Sunfish provides a universal set of RESTful interfaces, tools and services to manage fabric attached resources, such as CPUs, accelerators, storage, and memory. Sunfish uses the DMTF Redfish Scalable Platforms Management API Specification to allow clients to gather telemetry information on fabrics and components, request information about fabric attachments, allocate components, and compose disaggregated systems. Each vendor specific fabric can be controlled and manipulated through the use of a custom agent that is designed to provide its services and functions to Sunfish via the Redfish API. Sunfish is designed to be versatile and allow clients to connect and interact with underlying high-speed fabrics.
+Sunfish provides a universal set of RESTful interfaces, tools and services to manage fabric attached resources, such as CPUs, accelerators, storage, and memory. Sunfish uses the DMTF Redfish Scalable Platforms Management API Specification (aka Redfish) to allow clients to gather telemetry information on fabrics and components, request information about fabric attachments, allocate components, and compose disaggregated systems. Each vendor specific fabric can be controlled and manipulated through the use of a custom agent that is designed to provide its services and functions to Sunfish via the Redfish API. Sunfish is designed to be versatile and allow clients to connect and interact with underlying high-speed fabrics.
 
-Sunfish provides computing system clients with a common set of tools, to interact with disaggregated fabrics and resources. Clients may include, but are not limited to, Message Passing Interface applications, Fabric Attached Memory (FAM) managers, workload, resource, and cloud managers, IO system managers, storage configuration managers, and CPU and accelerator managers or consumers of such resources. Client embodiments may include, but are not limited to, physical machines, virtual machines, appliances, embedded computational engines, and containers. Any entity (e.g., SW tool, admin GUI, shell script via CLI) with the appropriate permissions may create a virtual platform, pod, cluster, partition, VLAN, job queue, or subnet to enable workload(s) to execute. 
+Sunfish provides computing system clients with a common set of tools to interact with disaggregated fabrics and resources. Clients may include, but are not limited to, Message Passing Interface applications, Fabric Attached Memory (FAM) managers, workload, resource, cloud managers, IO system managers, storage configuration managers, and CPU / accelerator managers or consumers of such resources. Client embodiments may include, but are not limited to, physical machines, virtual machines, appliances, embedded computational engines, and containers. Any entity (e.g., SW tool, admin GUI, shell script via CLI) with the appropriate permissions may create a virtual platform to enable workload(s) to execute. 
 
 <div style="page-break-after: always;"></div>
 # 2. Document Scope
 
 ## 2.1. Audience Assumptions
 
-As Sunfish is designed as an extension of the Redfish Scalable Platforms Management API Specifica
-tion, this document is written with the presumption that the reader has a detailed understanding of the Redfish Specification. This document cannot be fully understood without that context.
+As Sunfish is designed as an extension of the Redfish API Specification, this document is written with the presumption that the reader has a detailed understanding of the Redfish Specification. This document cannot be fully understood without that context.
 
 ## 2.2. Normative References
 
@@ -204,7 +203,7 @@ The documents referenced in [Table 3](#reference-table) are indispensable for th
 
 ## 2.3. Terms and Definitions
 
-In this document, some terms have a specific meaning beyond the normal English meaning. Those terms are defined in this clause including new terms, frequently used Composable Disaggregated Resource Management terms, Sunfish Terms, Redfish terms, etc.
+In this document, some terms have a specific meaning beyond the normal English meaning. These terms are defined in this clause including new terms, frequently used Composable Disaggregated Resource Management terms, Sunfish terms, Redfish terms, etc.
 
 ### 2.3.1. Sunfish-specific Terms
 
@@ -216,19 +215,20 @@ The terms listed in [Table 4](#sunfish-terms-table) are used in this document.
 
 
 | Term                      | Definition                                                                                                                                                                                                                                                                                      |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Sunfish Agent             | The translators between the Sunfish Core Redfish API syntax and schema and the vendor-specific versions used by the given Hardware Manager software.                                                                                                                                            |
-| Sunfish Agent Services    | The Redfish API exported by a Sunfish Agent                                                                                                                                                                                                                                                     |
-| Sunfish Service           | The Redfish API exported by the Sunfish Core                                                                                                                                                                                                                                                    |
-| Actors                    | Software stack entities or hardware embedded processors                                                                                                                                                                                                                                         |
-| Fabric resources          | any resource that might be made available to an application thread as an OS resource; EG. Memory, Fabric Attached Memory (FAM), GPUs, CPUs, storage, remote storage, etc.                                                                                                                       |
-| Fabric Management Objects | any resource that an administrator might need to manipulate to establish proper behavior of the fabrics that interconnect the composable resources; EG., fabric switches, fabric gateways, firewalls, etc.                                                                                      |
-| Clients                   | are any of the applications, application libraries (such as libfabric, OpenFAM, or OpenSHMEM), resource managers (such as FAM pool managers, storage pool managers), orchestration managers, workload managers, and the admin GUI and tools that call into the Sunfish CORE’s Redfish Services. |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | <TBD - CAYTON - Alphabetize this list>
+| Sunfish Agents            | The translators between the Sunfish / Redfish API syntax and schema and the vendor-specific versions used by the given Hardware Manager software.                                                                                                                                            |
+| Sunfish Agent Service     | A Redfish API exported by a Sunfish Agent.                                                                                                                                                                                                                                                     |
+| Sunfish Service           | The Redfish API exported by the Sunfish Core.                                                                                                                                                                                                                                                    |
+| Actors                    | Software stack entities or hardware embedded processors.                                                                                                                                                                                                                                         |
+| Fabric resources          | Any resource (e.g., memory, Fabric Attached Memory (FAM), GPUs, CPUs, storage, remote storage) on a CDI fabric that may be composed with other resources on the fabric.                                                                                                                       |
+| Fabric Management Objects | Any resource that an administrator might need to manipulate to establish proper behavior of the fabrics that interconnect the composable resources; EG., fabric switches, fabric gateways, firewalls, etc.                                                                                      |
+| Clients                   | Any of the applications, application libraries (e.g., libfabric, OpenFAM, or OpenSHMEM), resource managers (e.g., FAM pool managers, storage pool managers), orchestration managers, workload managers, and the admin GUI and tools that call into Sunfish Core Redfish Services. |
 | Composability Services    | a collection of resource managers, policy stores, and monitoring elements for tracking the current state of the entire system ([Section 4](#4-sunfish-framework)).                                                                                                                              |
-| Sunfish Core              | The stage of the Sunfish Framework which maintains the aggregate Redfish model of all fabrics it controls and all resources on those fabrics ([Section 4](#4-sunfish-framework)).                                                                                                               |
-| Hardware Manager          | refers to any hardware/software component that is direct control of a set of hardware components (e.g., fabric managers, enclosure managers, BMCs, etc.).                                                                                                                                       |
+| Sunfish Core              | The component in a Sunfish Server which maintains the aggregate Redfish model of all fabrics it controls and all resources on those fabrics ([Section 4](#4-sunfish-framework)).                                                                                                               |
+| Sunfish Framework	    | The Sunfish software stack and connecting API (e.g., Hardware Managers, Sunfish Core, Composability Services, Clients) ([Section 4](#4-sunfish-framework)).                                     | <TBD - GLOBAL - resolve the use of the term "Sunfish" as e.g., Sunfish Framework>
+| Hardware Manager          | Any hardware/software component that is in direct control of a set of hardware components (e.g., fabric managers, enclosure managers, BMCs).                                                                                                                                       |
 
-### 2.3.2. Redfish terms
+### 2.3.2. Redfish Terms
 
 Many terms in this document were originally defined in the Redfish Specification. Some of the more common terms and definitions are reproduced in [Table 5](#redfish-terms-table), as an aid to the reader.
 
@@ -246,13 +246,13 @@ Many terms in this document were originally defined in the Redfish Specification
 | Request                | A message from a client to a service.                                                                                                                                              |
 | Service Root           | Resource that serves as the starting point for locating and accessing the other resources and associated metadata that together make up an instance of a Redfish Service.          |
 
-## 2.4. Keywords (normative language terms)
+## 2.4. Keywords (Normative Language Terms)
 
 This document conforms to ISO/IEC Directives, Part 2 for keyword usage. The most common terms and their intended meanings are summarized [Table 6](#normative-terms-table).
 
 
 <a id="normative-terms-table"></a>
-<p style="text-align:left">Table 6: Normative language terms</p>
+<p style="text-align:left">Table 6: Normative Language Terms</p>
 
 
 | Term(s)             | Meaning                                                                                                                                                                                                                                                                                                               |
@@ -268,13 +268,16 @@ This document conforms to ISO/IEC Directives, Part 2 for keyword usage. The most
 
 ## 3.1. Introduction
 
-Sunfish is a centralized management platform for Composable Disaggregated Infrastructure (CDI).  Sunfish provides a method by which compute resources, that are attached by high speed, low latency networks (e.g., CXL/PCIe, RDMA, Ethernet), can be assembled together and managed as if the components were part of a traditional compute server.  
+Sunfish is a centralized management platform for Composable Disaggregated Infrastructure (CDI).  The Sunfish Framework provides a method by which compute resources, that are attached by high speed, low latency networks (e.g., CXL/PCIe, RDMA, Ethernet), can be assembled together and managed as if the components were part of a traditional compute server.  
 
-This chapter provides a description of Sunfish and attached components that provide organized assembly of material resources and managers that provide the hardware associations used in composing systems out of disaggregated components.
+This chapter provides: <TBD - Cayton - turn this into a 'pretty' bulleted list>
+* an overview of Composable Disaggregated Infrastructures (CDI),
+* a description of Sunfish and attached components that provide organized assembly of material resources, and
+* managers that provide the hardware associations used in composing systems out of disaggregated components.
 
 ### 3.1.1. Overview of Composable Disaggregated Infrastructure
 
-With Composable Disaggregated Infrastructures (CDI), computational resources are not statically provisioned in servers, but instead are physically disaggregated in shared pools and connected through high-speed/low-latency network fabrics. These resources may be dynamically provisioned and re-provisioned to client applications, as needed, and are thus not only more efficient to manage by removing unnecessary hardware, but help reduce energy consumption and datacenter cooling costs.  CDI enables assigning of pools of resources to consumers.  Remote resource disaggregation is already common for storage devices (e.g., NVMe-oF); current trends are pushing this paradigm further, extending it to assigning private or shared resources such as computational engines, disaggregated memory elements, disaggregated accelerators, and eventually to all forms of compute resources required by modern HPC applications. 
+With CDI, computational resources are not statically provisioned in servers, but instead are physically disaggregated in shared pools and connected through high-speed/low-latency network fabrics. These resources may be dynamically provisioned and re-provisioned to client applications, as needed, and are thus not only more efficient to manage by removing unnecessary hardware, but help reduce energy consumption and datacenter cooling costs.  CDI enables assigning of pools of resources to consumers.  Remote resource disaggregation is already common for storage devices (e.g., NVMe-oF); current trends are pushing this paradigm further, extending it to assigning private or shared resources such as computational engines, disaggregated memory elements, and disaggregated accelerators. 
 
 CDI eases issues currently plaguing today's HPC, Cloud, AI, etc. architectures.  In current large-scale compute architectures, clusters are created by combining separate servers over shared network fabrics. Traditional compute servers in clusters are statically provisioned and assembled with their own CPUs, memory devices, accelerator cards, and storage devices contained within a fixed size server enclosure. The need to incorporate “all of the options that may be required to support a given workload” often results in resource over-provisioning, limits parallel workloads, makes traditional HPC architectures less flexible and less efficient, and can lead to situations where application jobs are more prone to run-time failure. Resource over-provisioning and inefficient use of hardware are common issues to any large scale computing facility.
 

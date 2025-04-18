@@ -10,11 +10,11 @@ Version 0.3
 
 Sunfish is an implementation of an OpenFabrics Management Framework API that defines a RESTful interface and a standardized data model to provide data structures to help simplify the development of composable distributed, disaggregated, computer architectures. Sunfish contains data structures that represent abstracted computer system resources, available network fabric components and management, current resource operational conditions, and representations of composed disaggregated computing systems.
 
-*Last Updated 04/23/2024*
+*Last Updated 04/18/2025*
 
 **USAGE**
 
-Copyright (c) 2024 OpenFabrics Alliance (OFA). All rights reserved. All other trademarks or registered trademarks are the property of their respective owners.
+Copyright (c) 2025 OpenFabrics Alliance (OFA). All rights reserved. All other trademarks or registered trademarks are the property of their respective owners.
 
 The OpenFabrics Alliance hereby grants permission for individuals to use this document for personal use only, and for corporations and other business entities to use this document for internal use only (including internal copying, distribution, and display) provided that:
 
@@ -114,6 +114,7 @@ The OFA OFMF Working Group, which developed and reviewed this work in progress, 
 | Los Alamos National Labs         | Alex Lovell-Troy   |
 | Fsas Technologies Inc.           | Naoki Oguchi       |
 | Fsas Technologies Inc.           | Jin Hase           |
+| NEC Corporation		   | Peter Lee          |
 
 <div style="page-break-after: always;"></div>
 
@@ -127,7 +128,7 @@ The OFA OFMF Working Group, which developed and reviewed this work in progress, 
     - [2.3.1. Sunfish-specific Terms](#231-sunfish-specific-terms)
     - [2.3.2. Redfish terms](#232-redfish-terms)
   - [2.4. Keywords (normative language terms)](#24-keywords-normative-language-terms)
-- [3. Sunfish Framework](#3-sunfish-framework)
+- [3. Sunfish Framework Goals and Scope](#3-sunfish-framework)
   - [3.1. Introduction](#31-introduction)
     - [3.1.1. Overview of Composable Disaggregated Infrastructure](#311-overview-of-composable-disaggregated-infrastructure)
     - [3.1.2. Managing Composable Disaggregated Infrastructure](#312-managing-composable-disaggregated-infrastructure)
@@ -139,7 +140,7 @@ The OFA OFMF Working Group, which developed and reviewed this work in progress, 
     - [3.2.1. Goal](#321-goal)
     - [3.2.2. Strategy](#322-strategy)
     - [3.2.3. Deliverables in This Document](#323-deliverables-in-this-document)
-- [4. Sunfish Framework](#4-sunfish-framework)
+- [4. Sunfish Framework Details](#4-sunfish-framework)
   - [4.1. Components of the Sunfish Framework](#41-components-of-the-sunfish-framework)
     - [4.1.1. Clients](#411-clients)
     - [4.1.2. Composability Services](#412-composability-services)
@@ -264,11 +265,11 @@ This document conforms to ISO/IEC Directives, Part 2 for keyword usage. The most
 | must                | Identifies a constraint or obligation on the user of the document, typically due to one or more legal requirements or laws of nature, that is not stated as a provision of the standard *NB:* “must” is not an alternative for “shall”, and should only be used for constraints that arise from outside this standard |
 
 <div style="page-break-after: always;"></div>
-# 3. Sunfish Framework
+# 3. Sunfish Framework Goals and Scope
 
 ## 3.1. Introduction
 
-Sunfish is a centralized management platform for Composable Disaggregated Infrastructure (CDI).  The Sunfish Framework provides a method by which compute resources, that are attached by high speed, low latency networks (e.g., CXL/PCIe, RDMA, Ethernet), can be assembled together and managed as if the components were part of a traditional compute server.  
+Sunfish is a centralized management platform for Composable Disaggregated Infrastructure (CDI).  Sunfish provides a method for assembling and managing resources attached by high-speed, low-latency networks (e.g., CXL/PCIe, RDMA, Ethernet) as if these resources were part of a traditional compute server.  
 
 This chapter provides: <TBD - Cayton - turn this into a 'pretty' bulleted list>
 * an overview of Composable Disaggregated Infrastructures (CDI),
@@ -279,23 +280,24 @@ This chapter provides: <TBD - Cayton - turn this into a 'pretty' bulleted list>
 
 With CDI, computational resources are not statically provisioned in servers, but instead are physically disaggregated in shared pools and connected through high-speed/low-latency network fabrics. These resources may be dynamically provisioned and re-provisioned to client applications, as needed, and are thus not only more efficient to manage by removing unnecessary hardware, but help reduce energy consumption and datacenter cooling costs.  CDI enables assigning of pools of resources to consumers.  Remote resource disaggregation is already common for storage devices (e.g., NVMe-oF); current trends are pushing this paradigm further, extending it to assigning private or shared resources such as computational engines, disaggregated memory elements, and disaggregated accelerators. 
 
-CDI eases issues currently plaguing today's HPC, Cloud, AI, etc. architectures.  In current large-scale compute architectures, clusters are created by combining separate servers over shared network fabrics. Traditional compute servers in clusters are statically provisioned and assembled with their own CPUs, memory devices, accelerator cards, and storage devices contained within a fixed size server enclosure. The need to incorporate “all of the options that may be required to support a given workload” often results in resource over-provisioning, limits parallel workloads, makes traditional HPC architectures less flexible and less efficient, and can lead to situations where application jobs are more prone to run-time failure. Resource over-provisioning and inefficient use of hardware are common issues to any large scale computing facility.
+CDI eases issues currently plaguing today's HPC, Cloud, AI, etc. architectures.  In current large-scale compute architectures, clusters are created by combining separate servers over shared network fabrics. Traditional compute servers in clusters are statically provisioned and assembled with their own CPUs, memory devices, accelerator cards, and storage devices contained within a fixed size server enclosure. The need to incorporate “all of the options that may be required to support a given workload” often results in resource over-provisioning, limits parallel workloads, makes traditional architectures less flexible and less efficient, and can lead to situations where application jobs are more prone to run-time failure. Resource over-provisioning and inefficient use of hardware are common issues to any large scale computing facility.
 
 ### 3.1.2. Managing Composable Disaggregated Infrastructure
 
-The management and optimization of such a diverse set of fabrics and fabric technologies to realize the benefits of Composable Disaggregated Infrastructures is quickly becoming a complex issue to solve for infrastructure managers, especially in heterogeneous multi-vendor environments, with multiple vendor-sourced hardware and the ever-expanding collection of proprietary APIs and tools.
+Managing and optimizing a diverse set of fabrics and fabric technologies to realize the benefits of Composable Disaggregated Infrastructures is becoming increasingly complex for infrastructure managers, especially in heterogeneous multi-vendor environments with multiple vendor-sourced hardware and a growing collection of proprietary APIs and tools.
 
 The larger the HPC or Cloud system, the greater the potential impact of dynamic CDI to improve both energy efficiency and computational stability. Composability Services are needed to efficiently connect workloads with resources in a dynamic ecosystem, at scale, without concern for the management model of the underlying hardware technology. Centralized composability management must be scalable to be able to handle massive amounts of hardware telemetry, device states, device capabilities, and subscription information from large numbers of resources.
 
 Using centrally managed CDI on large-scale resources can lead to more efficient distribution of the resources, increased batch run performance, and allow measurable performance where efficient resource scheduling is as important as physical size.  As such, integration of newer HPC Workload Managers and Container deployment systems should be part of a master plan for centralized CDI management.  With aggregation of resources to meet parallel batch run requirements, CDI aggregation of resources should be made only after full verification that those aggregations can be made successfully.
 
-### 3.1.3. Sunfish/CDI Use Case Examples
+### 3.1.3. Sunfish/CDI Use Case Examples  <TBD - Russ - consider moving 3.1.3 to be part of the Sunfish Framework scope material>
 
-Sunfish and its components provide scalable central CDI management for large-scale, heterogeneous computing systems.  The core component of Sunfish, the redfish database, acts as the 'source of truth' for both aggregation and resource attachment for the current state of the running system.  Sunfish Agents provide real-time interaction with hardware and network management components and are tasked with providing 'real world' hardware configuration and provisioning.  A Composability Service allows for complex integration with both workload and container deployments.  The Composability Service attempts to associate client workloads with requested resource components.
+Sunfish Framework provides a set of components to provide scalable, central CDI management for large-scale, heterogeneous computing systems.
+The core component of Sunfish, the Redfish database <TBD: capitalize 'Redfish' globally>, acts as the 'source of truth' for both aggregation and resource attachment for the current state of the running system.  Sunfish Agents provide real-time interaction with hardware and network management components and are tasked with providing 'real world' hardware configuration and provisioning.  A Composability Service allows for complex integration with both workload and container deployments.  The Composability Service attempts to associate client workloads with requested resource components.
 
 #### 3.1.3.1. More Efficient Sharing of Resources Through Resource Pools
 
-In current non-CDI HPC systems, hardware resources necessary to support every type of computation must be installed into each compute node. Batch job execution is generally managed using a workload manager (e.g., Flux) or through container deployment (e.g., Kubernetes) and each batch job occupies a fixed subset of compute nodes.  This type of system architecture leads to stranded and wasted resources and limits the resources which may be available to other user jobs. For instance, if a user job requires six GPUs, 1 TB of on-board memory, and eight CPU cores in each node to complete a batch job, then the job cannot be run on a cluster with four GPUs and four CPU cores. In addition, if a batch job needs only two GPUs and two CPU cores, the other two GPUs and six CPU cores are wasted resources that can't be allocated to other batch jobs. 
+In current non-CDI scale-out infrastructures, hardware resources necessary to support every type of computation must be installed into each compute node. Batch job execution is generally managed using a workload manager (e.g., Flux) or through container deployment (e.g., Kubernetes) and each batch job occupies a fixed subset of compute nodes.  This type of system architecture leads to stranded and wasted resources and limits the resources which may be available to other user jobs. For instance, if a batch job requires six GPUs, 1 TB of on-board memory, and eight CPU cores in each node to complete a batch job, then the job cannot be run on a cluster with four GPUs and four CPU cores. In addition, if a batch job needs only two GPUs and two CPU cores, the other two GPUs and six CPU cores are wasted resources that can't be allocated to other batch jobs. 
 
 Some workload managers or container deployment systems are very capable of time-sharing many of the multi-tasking resources within their control and thereby optimizing the utilization of those resources during the execution of the job streams on cluster sizes for which they are designed.  Bringing multiples of such workload managers or deployment systems into a composable HPC environment then requires a methodology for composing smaller, virtual clusters which can be handed over to these  'virtual cluster managers' which are tailored to specific classes of workloads.  In large HPC installations, there can be hundreds or thousands of virtual cluster managers watching over their private, composable resource pools, so it is essential the Sunfish Composability Services are architected to be hierarchically scalable.  
 
@@ -312,14 +314,18 @@ The CXL 3.1 specification enables remote memory to be pooled or shared. [Figure 
 
 #### 3.1.3.3. Composable Accelerators
 
-The cost of acquiring, maintaining, sharing, and cooling computational accelerators has begun to be an issue for large-scale parallel systems, such as HPC and Cloud computing platforms. CDI, through the use of fabrics and CXL can help provide accelerator resources, with peer-to-peer communication capabilities, when and where they are needed in batch computations.
+The cost of acquiring, maintaining, sharing, and cooling computational accelerators has begun to be an issue for large-scale parallel systems, such as HPC and Cloud computing platforms. CDI, through the use of fabrics and CXL can help provide accelerator resources with peer-to-peer communication capabilities, when and where they are needed.
 
 As an example, GPUs can be managed by Sunfish as network fabric attached pools, or as CXL fabric pools, as part of a peer-to-peer resource sharing architectural arrangement, across compute nodes. The Sunfish Core database provides entry links that reflect the current attachment arrangement.   
 
 ## 3.2. Sunfish Framework Scope
 
-### 3.2.1. Goal
-Provide clients of Sunfish with a vendor and fabric agnostic API which enables them to view manage and orchestrate the resources in a CDI scenario. Users will be able to query all the resources in the available fabrics, understand their status, manipulate their state and finally compose them into virtualized compute nodes that can then be assigned to workloads directly or via virtual machines and containers. 
+### 3.2.1. Goals
+Provide clients of Sunfish with a vendor and fabric agnostic API which enables them to view, manage, and orchestrate the resources in a CDI scenario.
+Supply providers with requirements for creating Sunfish-compliant abstracted Redfish models of their fabric-attached resources.
+
+Meeting these goals will enable providers and consumers of the Redfish models to have a mutual understanding of the content and capabilities of the models. Users will thus be able to query all the resources in the available fabrics, understand their status, manipulate their state and finally compose them into virtualized compute nodes that can then be assigned to workloads directly or via virtual machines and containers.
+
 
 ### 3.2.2. Strategy
 The OFA Sunfish team is using the following strategy to define the Sunfish Framework:
@@ -330,14 +336,14 @@ The OFA Sunfish team is using the following strategy to define the Sunfish Frame
 
 
 ### 3.2.3. Deliverables in This Document
-This document describes the approach and architecture of the sunfish framework, its software  and the API that actors use for interacting with a Sunfish service.
-This document is also defining the *Sunfish compliant* interpretations of Redfish and Swordfish schemas. All APIs and interactions are based on DMTF Redfish and SNIA Swordfish specifications. New schema objects are introduced and detailed whenever necessary.
+This document describes the approach and architecture of the Sunfish Framework, its software and the API that actors use for interacting with a Sunfish service.
+This document also defines the *Sunfish compliant* interpretations of Redfish and Swordfish schemas. All APIs and interactions are based on DMTF Redfish and SNIA Swordfish specifications. New schema objects are introduced and detailed whenever necessary.
 
 This document is a living document, and readers should expect frequent updates, additions and corrections as the various problems to be solved are addressed and as the various related standards evolve.
 
 <div style="page-break-after: always;"></div>
 
-# 4. Sunfish Framework
+# 4. Sunfish Framework Details
 
 Sunfish is designed to configure fabric interconnects and manage composable, disaggregated resources in dynamic highly distributed compute infrastructures using client-friendly abstractions. Sunfish provides a framework for abstraction of, and communication with, the multitude of independent management tools behind a single, consistent, standards-based API; it
 does this through a universal set of RESTful interfaces and tools and services to manage fabric attached resources, such as, CPUs, Accelerators, and Memory Devices. Sunfish uses the common languages of Redfish and Swordfish, to allow clients to gather telemetry information on fabrics and components, request information about fabric attachments, allocate components, and compose disaggregated systems. Each vendor specific fabric can be controlled and manipulated through the use of a custom agent that is designed to provide its services and functions to Sunfish via the Redfish API. [Figure 2](#sunfish-objectives-fig) presents the concepts of the Sunfish Framework in visual form. 
@@ -504,7 +510,7 @@ The handshake process is depicted in [Figure 4](#handshake-fig). The registratio
         "Message": "A aggregation source of connection method
 		            Redfish located at http://hostname:port
 					has been discovered.",
-        "MessageId": "ReosurceEvent.1.x.AggregationSourceDiscovered",
+        "MessageId": "ResourceEvent.1.x.AggregationSourceDiscovered",
         "MessageArgs": [ "Redfish", "http://hostname:port" ],
         "OriginOfCondition": {
             "@odata.id": "/redfish/v1/AggregationService/ConnectionMethods/NAME"
@@ -556,13 +562,13 @@ Objects are marked using the `Oem` field that, according to the Redfish specific
 ```
 
 ## 4.5. Failover / Failure-recovery
- The following scenarios are example failure and restart situations that the Sunfish architecture is intended to cover:
+ Example failure and restart situations that the Sunfish architecture is intended to cover:
 
 - Agent Restart: A running fabric has an up-to-date Sunfish Core Services model of the fabric, provided by a specific instance of an Agent which, in turn, is in communication with one or more running Hardware Managers. Then the Agent software instance encounters a fault and restarts. The Sunfish Core Services' Client APIs and services may be momentarily stalled, but are not terminated. The fabric Hardware Managers remain functional with no service interruptions to completely configured virtual platforms. Agent services are unavailable until the reboot completes and the Agent software rebuilds its state and internal fabric models from the Hardware Managers' state and the alerts Sunfish Core that it must re-load the fabric model in case anything changed on the hardware while the Agent was offline.
 - Agent Failover: The same behavior applies to the Sunfish Core Services and the fabric hardware functionality, but when the Agent software instance encounters a fault it shuts down rather than reboots. A secondary (failover) Agent detects the failure of the primary Agent, securely terminates the primary Agent and assumes the role of the primary Agent in a fashion similar to the Agent Restart scenario.
 - Hardware Manager restart or failover: A running fabric has an up-to-date Sunfish Core Services model of the fabric, provided by a specific instance of an Agent which, in turn, is in communication with one or more running Hardware Managers. If any of the Hardware Managers encounters a fault or otherwise determines that its internal state may be inconsistent with the hardware, the Hardware Manager restarts or failovers to a secondary Hardware Manager without disturbing the current state of the fabric hardware.
 
-The primary axioms in all the above scenarios are:
+Primary axioms in all the above scenarios are the following:
 
 1. Any restart of the software above the fabric hardware **shall not** disturb the current state of the fabric hardware in the process of rebuilding software's state.
 2. The current state of the fabric hardware is the correct state that should be reflected in the Sunfish Core. All Hardware Managers, Agents, and the Sunfish Core **shall** rebuild their internal models to be consistent with the current fabric hardware state.

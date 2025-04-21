@@ -10,7 +10,7 @@ Version 0.3
 
 Sunfish is an implementation of an OpenFabrics Management Framework API that defines a RESTful interface and a standardized data model to provide data structures to help simplify the development of composable distributed, disaggregated, computer architectures. Sunfish contains data structures that represent abstracted computer system resources, available network fabric components and management, current resource operational conditions, and representations of composed disaggregated computing systems.
 
-*Last Updated 04/18/2025*
+*Last Updated 04/21/2025*
 
 **USAGE**
 
@@ -128,19 +128,19 @@ The OFA OFMF Working Group, which developed and reviewed this work in progress, 
     - [2.3.1. Sunfish-specific Terms](#231-sunfish-specific-terms)
     - [2.3.2. Redfish terms](#232-redfish-terms)
   - [2.4. Keywords (normative language terms)](#24-keywords-normative-language-terms)
-- [3. Sunfish Framework Goals and Scope](#3-sunfish-framework)
-  - [3.1. Introduction](#31-introduction)
+- [3. Introduction of Composable Disagregated Infrasture and the Sunfish Project](#3-introduction-of-composable-disagregated-infrastructure-and-the-sunfish-project)
+  - [3.1. Composable Disagregated Infrastructure](#31-composable-disagregated-infrastructure)
     - [3.1.1. Overview of Composable Disaggregated Infrastructure](#311-overview-of-composable-disaggregated-infrastructure)
     - [3.1.2. Managing Composable Disaggregated Infrastructure](#312-managing-composable-disaggregated-infrastructure)
-    - [3.1.3. Sunfish/CDI Use Case Examples](#313-sunfishcdi-use-case-examples)
+    - [3.1.3. CDI Use Case Examples](#313-cdi-use-case-examples)
       - [3.1.3.1. More Efficient Sharing of Resources Through Resource Pools](#3131-more-efficient-sharing-of-resources-through-resource-pools)
       - [3.1.3.2. Sharing of Memory resources](#3132-sharing-of-memory-resources)
       - [3.1.3.3. Composable Accelerators](#3133-composable-accelerators)
-  - [3.2. Sunfish Framework Scope](#32-sunfish-framework-scope)
+  - [3.2. Sunfish Project](#32-sunfish-project)
     - [3.2.1. Goal](#321-goal)
     - [3.2.2. Strategy](#322-strategy)
     - [3.2.3. Deliverables in This Document](#323-deliverables-in-this-document)
-- [4. Sunfish Framework Details](#4-sunfish-framework)
+- [4. Sunfish Framework Architecture](#4-sunfish-framework-architecture)
   - [4.1. Components of the Sunfish Framework](#41-components-of-the-sunfish-framework)
     - [4.1.1. Clients](#411-clients)
     - [4.1.2. Composability Services](#412-composability-services)
@@ -343,7 +343,7 @@ This document is a living document, and readers should expect frequent updates, 
 
 <div style="page-break-after: always;"></div>
 
-# 4. Sunfish Framework Details
+# 4. Sunfish Framework Architecture
 
 Sunfish is designed to configure fabric interconnects and manage composable, disaggregated resources in dynamic highly distributed compute infrastructures using client-friendly abstractions. Sunfish provides a framework for abstraction of, and communication with, the multitude of independent management tools behind a single, consistent, standards-based API; it
 does this through a universal set of RESTful interfaces and tools and services to manage fabric attached resources, such as, CPUs, Accelerators, and Memory Devices. Sunfish uses the common languages of Redfish and Swordfish, to allow clients to gather telemetry information on fabrics and components, request information about fabric attachments, allocate components, and compose disaggregated systems. Each vendor specific fabric can be controlled and manipulated through the use of a custom agent that is designed to provide its services and functions to Sunfish via the Redfish API. [Figure 2](#sunfish-objectives-fig) presents the concepts of the Sunfish Framework in visual form. 

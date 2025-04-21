@@ -129,7 +129,7 @@ The OFA OFMF Working Group, which developed and reviewed this work in progress, 
     - [2.3.2. Redfish terms](#232-redfish-terms)
   - [2.4. Keywords (normative language terms)](#24-keywords-normative-language-terms)
 - [3. Introduction of Composable Disagregated Infrasture and the Sunfish Project](#3-introduction-of-composable-disagregated-infrastructure-and-the-sunfish-project)
-  - [3.1. Composable Disagregated Infrastructure](#31-composable-disagregated-infrastructure)
+  - [3.1. Composable Disaggregated Infrastructure](#31-composable-disaggregated-infrastructure)
     - [3.1.1. Overview of Composable Disaggregated Infrastructure](#311-overview-of-composable-disaggregated-infrastructure)
     - [3.1.2. Managing Composable Disaggregated Infrastructure](#312-managing-composable-disaggregated-infrastructure)
     - [3.1.3. CDI Use Case Examples](#313-cdi-use-case-examples)
@@ -137,7 +137,7 @@ The OFA OFMF Working Group, which developed and reviewed this work in progress, 
       - [3.1.3.2. Sharing of Memory resources](#3132-sharing-of-memory-resources)
       - [3.1.3.3. Composable Accelerators](#3133-composable-accelerators)
   - [3.2. Sunfish Project](#32-sunfish-project)
-    - [3.2.1. Goal](#321-goal)
+    - [3.2.1. Goals](#321-goals)
     - [3.2.2. Strategy](#322-strategy)
     - [3.2.3. Deliverables in This Document](#323-deliverables-in-this-document)
 - [4. Sunfish Framework Architecture](#4-sunfish-framework-architecture)
@@ -265,20 +265,18 @@ This document conforms to ISO/IEC Directives, Part 2 for keyword usage. The most
 | must                | Identifies a constraint or obligation on the user of the document, typically due to one or more legal requirements or laws of nature, that is not stated as a provision of the standard *NB:* “must” is not an alternative for “shall”, and should only be used for constraints that arise from outside this standard |
 
 <div style="page-break-after: always;"></div>
-# 3. Sunfish Framework Goals and Scope
-
-## 3.1. Introduction
-
-Sunfish is a centralized management platform for Composable Disaggregated Infrastructure (CDI).  Sunfish provides a method for assembling and managing resources attached by high-speed, low-latency networks (e.g., CXL/PCIe, RDMA, Ethernet) as if these resources were part of a traditional compute server.  
-
+# 3. Introduction of Composable Disaggregated Infrastructure and the Sunfish Project
 This chapter provides: <TBD - Cayton - turn this into a 'pretty' bulleted list>
 * an overview of Composable Disaggregated Infrastructures (CDI),
 * a description of Sunfish and attached components that provide organized assembly of material resources, and
 * managers that provide the hardware associations used in composing systems out of disaggregated components.
+	
+## 3.1. Composable Disaggregated Infrastructure
+<TBD - ~1 sentence formal definition of CDI>
 
 ### 3.1.1. Overview of Composable Disaggregated Infrastructure
 
-With CDI, computational resources are not statically provisioned in servers, but instead are physically disaggregated in shared pools and connected through high-speed/low-latency network fabrics. These resources may be dynamically provisioned and re-provisioned to client applications, as needed, and are thus not only more efficient to manage by removing unnecessary hardware, but help reduce energy consumption and datacenter cooling costs.  CDI enables assigning of pools of resources to consumers.  Remote resource disaggregation is already common for storage devices (e.g., NVMe-oF); current trends are pushing this paradigm further, extending it to assigning private or shared resources such as computational engines, disaggregated memory elements, and disaggregated accelerators. 
+With Composable Disaggregated Infrastructure (CDI), computational resources are not statically provisioned in servers, but instead are physically disaggregated in shared pools and connected through high-speed/low-latency network fabrics. These resources may be dynamically provisioned and re-provisioned to client applications, as needed, and are thus not only more efficient to manage by removing unnecessary hardware, but help reduce energy consumption and datacenter cooling costs.  CDI enables assigning of pools of resources to consumers.  Remote resource disaggregation is already common for storage devices (e.g., NVMe-oF); current trends are pushing this paradigm further, extending it to assigning private or shared resources such as computational engines, disaggregated memory elements, and disaggregated accelerators. 
 
 CDI eases issues currently plaguing today's HPC, Cloud, AI, etc. architectures.  In current large-scale compute architectures, clusters are created by combining separate servers over shared network fabrics. Traditional compute servers in clusters are statically provisioned and assembled with their own CPUs, memory devices, accelerator cards, and storage devices contained within a fixed size server enclosure. The need to incorporate “all of the options that may be required to support a given workload” often results in resource over-provisioning, limits parallel workloads, makes traditional architectures less flexible and less efficient, and can lead to situations where application jobs are more prone to run-time failure. Resource over-provisioning and inefficient use of hardware are common issues to any large scale computing facility.
 
@@ -290,10 +288,9 @@ The larger the HPC or Cloud system, the greater the potential impact of dynamic 
 
 Using centrally managed CDI on large-scale resources can lead to more efficient distribution of the resources, increased batch run performance, and allow measurable performance where efficient resource scheduling is as important as physical size.  As such, integration of newer HPC Workload Managers and Container deployment systems should be part of a master plan for centralized CDI management.  With aggregation of resources to meet parallel batch run requirements, CDI aggregation of resources should be made only after full verification that those aggregations can be made successfully.
 
-### 3.1.3. Sunfish/CDI Use Case Examples  <TBD - Russ - consider moving 3.1.3 to be part of the Sunfish Framework scope material>
+### 3.1.3. CDI Use Case Examples  <TBD - Russ - consider moving 3.1.3 to be part of the Sunfish Framework scope material>
 
-Sunfish Framework provides a set of components to provide scalable, central CDI management for large-scale, heterogeneous computing systems.
-The core component of Sunfish, the Redfish database <TBD: capitalize 'Redfish' globally>, acts as the 'source of truth' for both aggregation and resource attachment for the current state of the running system.  Sunfish Agents provide real-time interaction with hardware and network management components and are tasked with providing 'real world' hardware configuration and provisioning.  A Composability Service allows for complex integration with both workload and container deployments.  The Composability Service attempts to associate client workloads with requested resource components.
+<TBD - Intro to material on CDI Use Case Examples>
 
 #### 3.1.3.1. More Efficient Sharing of Resources Through Resource Pools
 
@@ -303,7 +300,7 @@ Some workload managers or container deployment systems are very capable of time-
 
 #### 3.1.3.2. Sharing of Memory resources
 
-The CXL 3.1 specification enables remote memory to be pooled or shared. [Figure 1](#sharing-mem-resources-fig) shows a simple example of memory sharing. On the left side, the orange node is connected to the orange NVMe memory through a CXL switch. On the right side, the CXL components have been configured to allow the orange node to take a smaller portion of a shared NVMe memory. The blue node, needing more memory resources, has a portion of the shared memory and another CXL memory, again connected via a CXL fabric switch. Each of these CXL devices and switches potentially have their own Hardware Manager entities, each of which must be informed of the required configuration details. The Sunfish Framework provides administrators a single API through which to manage all these different components.
+The CXL 3.1 specification enables remote memory to be pooled or shared. [Figure 1](#sharing-mem-resources-fig) shows a simple example of memory sharing. On the left side, the orange node is connected to the orange NVMe memory through a CXL switch. On the right side, the CXL components have been configured to allow the orange node to take a smaller portion of a shared NVMe memory. The blue node, needing more memory resources, has a portion of the shared memory and another CXL memory, again connected via a CXL fabric switch. Each of these CXL devices and switches potentially have their own Hardware Manager entities, each of which must be informed of the required configuration details. A CDI management tool would provide administrators with a single API through which to manage all these different components.
 
 <a id="sharing-mem-resources-fig"></a>
 <p align="center">
@@ -316,16 +313,25 @@ The CXL 3.1 specification enables remote memory to be pooled or shared. [Figure 
 
 The cost of acquiring, maintaining, sharing, and cooling computational accelerators has begun to be an issue for large-scale parallel systems, such as HPC and Cloud computing platforms. CDI, through the use of fabrics and CXL can help provide accelerator resources with peer-to-peer communication capabilities, when and where they are needed.
 
-As an example, GPUs can be managed by Sunfish as network fabric attached pools, or as CXL fabric pools, as part of a peer-to-peer resource sharing architectural arrangement, across compute nodes. The Sunfish Core database provides entry links that reflect the current attachment arrangement.   
+As an example, GPUs can be treated by a CDI management tool as fabric attached accelerator pools. These accelerator resources can be shared across compute nodes in a peer-to-peer resource sharing architecture. The CDI management tool database would provide entry links that reflect the current attachment arrangement.   
 
-## 3.2. Sunfish Framework Scope
+## 3.2. Sunfish Project
+
+Sunfish is a centralized management platform for Composable Disaggregated Infrastructures.  Sunfish provides a method for assembling and managing resources attached by high-speed, low-latency networks (e.g., CXL/PCIe, RDMA, Ethernet) as if these resources were part of a traditional compute server.  
+
+Sunfish Framework provides a set of components to provide scalable, central CDI management for large-scale, heterogeneous computing systems. The core component of Sunfish, the Redfish database <TBD: capitalize 'Redfish' globally>, acts as the 'source of truth' for both aggregation and resource attachment for the current state of the running system.  Sunfish Agents provide real-time interaction with hardware and network management components and are tasked with providing 'real world' hardware configuration and provisioning.  A Composability Service allows for complex integration with both workload and container deployments.  The Composability Service attempts to associate client workloads with requested resource components.
+
 
 ### 3.2.1. Goals
-Provide clients of Sunfish with a vendor and fabric agnostic API which enables them to view, manage, and orchestrate the resources in a CDI scenario.
-Supply providers with requirements for creating Sunfish-compliant abstracted Redfish models of their fabric-attached resources.
+The goals of the Sunfish project are to provide a CDI management tool with a vendor and fabric agnostic API which enables them to view, manage, and orchestrate the resources in a CDI scenario and supply providers with requirements for creating Sunfish-compliant abstracted Redfish models of their fabric-attached resources.
 
 Meeting these goals will enable providers and consumers of the Redfish models to have a mutual understanding of the content and capabilities of the models. Users will thus be able to query all the resources in the available fabrics, understand their status, manipulate their state and finally compose them into virtualized compute nodes that can then be assigned to workloads directly or via virtual machines and containers.
 
+Any CDI management tool will necessarily have a hiearchical structure with different components of the stack between hardware resources, administrator tools, and clients of the tool. The Sunfish Project therefore proposes the Sunfish Framework which defines the components and APIs for each of the layers in the stack.
+
+<TBD: rationalize single vs double spacing between sentences>
+
+Future references to "Sunfish" and "Sunfish project" are interchangeable within this document. The term "Sunfish Framework" refers to Sunfish Framework components or APIs.
 
 ### 3.2.2. Strategy
 The OFA Sunfish team is using the following strategy to define the Sunfish Framework:

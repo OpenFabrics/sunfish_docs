@@ -4,7 +4,7 @@
 
 # Sunfish OpenFabrics Management Framework for Composable Disaggregated Infrastructures <!-- omit from toc -->
 
-Version 0.3
+Version 0.5
 
 **ABSTRACT:** Sunfish is designed to manage composable disaggregated resources across multiple fabrics using a central repository and an open-source API and toolset. It provides client-friendly RESTful abstractions for manipulating connected hardware resources and for configuring fabric interconnects, enabling datacenter and AI workloads to link with available resources over dynamic fabric infrastructures.
 

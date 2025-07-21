@@ -10,14 +10,7 @@ Version 0.3
 
 Sunfish is an implementation of an OpenFabrics Management Framework API that defines a RESTful interface and a standardized data model to provide data structures to help simplify the development of composable distributed, disaggregated, computer architectures. Sunfish contains data structures that represent abstracted computer system resources, available network fabric components and management, current resource operational conditions, and representations of composed disaggregated computing systems.
 
-<<<<<<< Updated upstream
-
-*Last Updated 04/25/2025*
-=======
-
 *Last Updated 04/28/2025*
-
->>>>>>> Stashed changes
 
 **USAGE**
 

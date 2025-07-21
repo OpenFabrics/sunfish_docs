@@ -3,7 +3,7 @@
 # OFA Sunfish Framework Documentation 
 This is the web page hosting the OFA Sunfish framework documentation.
 
-Current version: v0.3
+Current version: v0.3.1
 
 - [Browse HTML](https://openfabrics.github.io/sunfish_docs/Sunfish%20Doc.html)
 - [Download PDF](https://github.com/OpenFabrics/sunfish_docs/releases) 

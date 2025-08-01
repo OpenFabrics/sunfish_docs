@@ -107,6 +107,8 @@ The OFA OFMF Working Group, which developed and reviewed this work in progress, 
 | IntelliProp                      | Jim Hull           |
 | IntelliProp                      | Tracy Spitler      |
 | Lawrence Livermore National Labs | Chris Morrone      |
+| Lawrence Livermore National Labs | Nathan Hanford     |
+| Lawrence Livermore National Labs | William Hobbs      |
 | Cornelis Networks                | Eugene Novak       |
 | Cornelis Networks                | Dennis Dalessandro |
 | AMD                              | Kurt Bowman        |
@@ -676,10 +678,10 @@ Thus, Redfish declares that a `Connection` specifically enables one Endpoint ent
 
 Discovery of physical and logical resources accessible via the fabric is necessarily a fabric-specific operation. Fabric-specific requirements for the creation and interpretation of Redfish fabric objects are listed in Appendix A ([Section 7](#7-appendix-a-sunfish-requirements-for-redfish-modelling)). 
 
-<!-- ## 4.8. Discovering Resources via Sunfish Core
+## 4.8. Discovering Resources via Sunfish Core TBD
 
-TBD -->
 <div style="page-break-after: always;"></div>
+
 # 5. Sunfish Agents
 
 This chapter defines the basic roles and responsibilities of a general Sunfish Agent.   Detailed requirements for specific Redfish objects or properties, as well as requirements for specific fabrics are presented in Appendix A.  
@@ -697,8 +699,7 @@ The general nature of Agent duties are explained in the overview of Agents. The 
 	- However, the Agent cannot use GETs to the Sunfish Core Service to discover what was made visible to the Sunfish Core should the Agent drop. The Agent must alert the Sunfish Core that they are potentially out of sync. The Sunfish Core must re-fetch the Agent's inventory and state and resolve any discrepancies between the new uploaded data and that data the Sunfish Core database has associated with the Agent.
 	- By definition, the most recently uploaded data from the Agent, if newer (by timestamp) than what the Sunfish Core has stored is to be accepted as the latest statement of fabric state and the Sunfish Core shall amend its models to match the Agent's. See also section 4.5 for more details.
 	<!-- CHRISTIAN: I am commenting this out because it requires more work for it to be fleshed out properly -->
-	<!-- * The Agent shall issue an Agent Restart Event to the Sunfish Core Service if the Agent drops and recovers. *(Actual name of event TBD)*
-- Sunfish Core and Agent actions in response to an Agent Restart are TBD. See also section 4.5, Failover / Failure-recover. -->
+	<!-- * The Agent shall issue an Agent Restart Event to the Sunfish Core Service if the Agent drops and recovers. *(Actual name of event TBD)* Sunfish Core and Agent actions in response to an Agent Restart are TBD. See also section 4.5, Failover / Failure-recover. -->
 * The Agent parses Redfish requests from the Sunfish Core and 
 	- Evaluates the impact on the Agent’s model of the fabric
 	- Evaluates the impact on the Hardware Manager’s state of the fabric, and creates an appropriate Hardware Manager specific request to cause the Hardware Manager to update the state of the fabric accordingly 
@@ -706,8 +707,6 @@ The general nature of Agent duties are explained in the overview of Agents. The 
 * The Agent parses any Agent specific HTTP Requests. These are requests made through the Agent’s client interface that target Agent internal configuration and are not meant to directly manipulate Redfish objects. Think of these as Agent administration requests.
 	- Examples: Restart the Agent, sync with a Redundant Agent
 * The Agent registers for events from the Hardware Manager to receive notice of dynamic changes in fabric hardware and Hardware Manager or Host software.
-
-
 
 ## 5.2. Security
 
@@ -722,6 +721,7 @@ This document already lists Redfish Event types and the policies to be used with
 TBD -->
 
 <div style="page-break-after: always;"></div>
+
 # 6. Bibliography
 
 ## 6.1. Overview

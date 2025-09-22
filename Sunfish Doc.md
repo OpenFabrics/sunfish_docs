@@ -928,3 +928,50 @@ In the following tables the term "**UUID-formatted**" refers to a 16-byte identi
 ## 7.3.  Sunfish Requirements for Redfish Modeling of Host Compute Systems
 
 ## 7.4. Sunfish Requirements for Redfish Modeling of Boundary Components -->
+
+<div style="page-break-after: always;"></div>
+# 8. Appendix B: Integrating Flux with Sunfish to accelerate HPC Systems with Near-node Flash Burst-buffers
+
+## 8.1.  Flux and Near-node Burst-buffers
+
+### 8.1.1 Flux
+Flux (https://flux-framework.org) is a HPC Workload Manager being used in some of the fastest HPC systems in the world, including El Capitan, Tuolomne, and Eldorado (reference flux documentation: https://flux-framework.readthedocs.io/en/latest/).
+
+To provide Sunfish provided CDI resources to an HPC system, the HPC Workload Manager needs to be able to handle scheduling of these individual and group resources that Sunfish provides.
+
+While most HPC Workload Managers can only understand features of underlying compute nodes and attached resources, Flux provides a notion of disaggregated, fine-grained resource details. Flux can actually schedule individual resources. 
+
+Sunfish provides Redfish descriptions of NVMe-oF resources to Flux and tracks their status. Flux further assigns those resources to specific Flux administered compute-nodes. Once Flux no longer requires those resources it will release them back to Sunfish for reallocation. Together, Flux and Sunfish can construct and schedule software-defined compute nodes that include NVMe Fabric-attached drives with compute nodes.
+
+### 8.1.2 Flux and Near-node Burst-buffers
+
+Burst-buffers are dynamic in nature; storage resoures are assigned and used for this ephemeral storage, then deallocated, and later reassigned for other purposes. Near-node burst-buffers are burst-buffers located in the same rack as the compute nodes that use them.
+
+Flux will use NVMe Fabric-attached storage-resources as near-node burst-buffers for short to intermediate term ephemeral storage (aka 'very hot storage') for HPC computation data or state. 
+
+NVMe fabrics attached storage resources are modelled and respresented as Redfish Namespaces in Sunfish.
+
+## 8.2 Integrating Flux with Sunfish
+
+Figure TBD shows a Flux installation integrated with Sunfish CDI Managers to assign NVMe-oF Namespaces to Flux Brokers (i.e., compute-nodes).  
+
+Flux will recieve updates from Sunfish via events
+
+<TBD: Flux diagram showing burst-buffer allocation>
+
+## 8.3 Installing Flux Scheduler
+
+
+git clone https://github.com/flux-framework/flux-sched.git
+cd /opt/flux-sched
+yum install clang
+yum install epel-release
+yum install python3.12-devel boost-devel python3-jsonschema boost-devel catch2
+ln -s /usr/bin/clang /usr/local/bin/c++ 
+which clang
+cmake -B build .
+cd build
+make -j 8  
+
+
+
